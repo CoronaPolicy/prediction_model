@@ -1,0 +1,10 @@
+axes.titlesize : 22
+axes.labelsize : 16
+figure.subplot.hspace  : 0.4
+lines.linewidth : 2.5
+lines.markersize : 10
+xtick.labelsize : 16
+ytick.labelsize : 16
+grid.alpha : 0.5
+figure.autolayout : True 
+figure.figsize : 15,12
