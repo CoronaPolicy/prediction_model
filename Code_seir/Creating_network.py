@@ -3,9 +3,10 @@ from seirsplus.networks import *
 from seirsplus.sim_loops import *
 from seirsplus.utilities import *
 import networkx
-import matplotlib.pyplot as pyplot
+import time
 import matplotlib.pyplot as plt
 import pickle
+from seirsplus.utilities import load_model, save_model
 
 if __name__ == "__main__":
     """
@@ -28,18 +29,18 @@ if __name__ == "__main__":
     """
     N = 20000
     INIT_EXPOSED = int((2006/9e6)*N)
-    Load_graph=True
+    Load_graph = True
 
     if not Load_graph:
         demographic_graphs, individual_ageGroups, households = generate_demographic_contact_network(
             N=N, demographic_data=household_country_data('ISRAEL'),
-            distancing_scales=[300,9,3,0.5,5,10,11], isolation_groups=[],verbose=False)
+            distancing_scales=[300, 9, 3, 0.5, 5, 10, 11], isolation_groups=[], verbose=False)
 
         G_baseline = demographic_graphs['baseline']
-        G_less_connections_1=demographic_graphs['distancingScale300']
+        G_less_connections_1 = demographic_graphs['distancingScale300']
         G_less_connections_2 = demographic_graphs['distancingScale9']
         G_less_connections_3 = demographic_graphs['distancingScale3']
-        G_less_connections_4=demographic_graphs['distancingScale0.5']
+        G_less_connections_4 = demographic_graphs['distancingScale0.5']
         G_less_connections_5 = demographic_graphs['distancingScale5']
         G_less_connections_6 = demographic_graphs['distancingScale10']
         G_less_connections_7 = demographic_graphs['distancingScale11']
@@ -60,17 +61,18 @@ if __name__ == "__main__":
         pickle.dump(households, open("households.p", "wb"))  # save it into a file named save.p
         pickle.dump(individual_ageGroups, open("individual_ageGroups.p", "wb"))
     else:
-        G_baseline =networkx.read_gpickle("G_baseline.gpickle")
-        G_less_connections_1 =networkx.read_gpickle("G_less_connections_1.gpickle")
+        G_baseline = networkx.read_gpickle("G_baseline.gpickle")
+        G_less_connections_1 = networkx.read_gpickle("G_less_connections_1.gpickle")
         G_less_connections_2 = networkx.read_gpickle("G_less_connections_2.gpickle")
         G_less_connections_3 = networkx.read_gpickle("G_less_connections_3.gpickle")
-        G_less_connections_4 =networkx.read_gpickle("G_less_connections_4.gpickle")
+        G_less_connections_4 = networkx.read_gpickle("G_less_connections_4.gpickle")
         G_less_connections_5 = networkx.read_gpickle("G_less_connections_5.gpickle")
         G_less_connections_6 = networkx.read_gpickle("G_less_connections_6.gpickle")
+        G_less_connections_7 = networkx.read_gpickle("G_less_connections_7.gpickle")
 
-        G_quarantine =networkx.read_gpickle("G_quarantine.gpickle")
+        G_quarantine = networkx.read_gpickle("G_quarantine.gpickle")
         households = pickle.load(open("households.p", "rb"))
-        individual_ageGroups=pickle.load( open("individual_ageGroups.p", "rb"))
+        individual_ageGroups = pickle.load( open("individual_ageGroups.p", "rb"))
     households_indices = [household['indices'] for household in households]
     #plot_degree_distn(G_baseline, max_degree=100)
     #plot_degree_distn(G_quarantine, max_degree=100)
@@ -114,10 +116,9 @@ if __name__ == "__main__":
     BETA_Q = BETA * (0.3 / R0_mean)
     #-------------------------model over time --------------------------------
 
-
     P_GLOBALINTXN = 0.1  # interactions being with incidental or casual contacts outside their set of close contacts
-    Q_GLOBALINTXN = 0.03 # interaction when a person is in quarntine
-    PCT_ASYMPTOMATIC = 0.25 # precent of asymptomatic
+    Q_GLOBALINTXN = 0.03  # interaction when a person is in quarantine
+    PCT_ASYMPTOMATIC = 0.25  # percent of asymptomatic
 
     # ------------------------------------------------------------------------------#
     #-------------------Hospitalization data----------------------------------------#
@@ -150,9 +151,6 @@ if __name__ == "__main__":
                                      '80+': 0.7283}
     PCT_FATALITY = [ageGroup_hospitalFatalityRate[ageGroup] for ageGroup in individual_ageGroups]
 
-
-
-
     model = ExtSEIRSNetworkModel(G=G_baseline, p=P_GLOBALINTXN,
                                  beta=BETA, sigma=SIGMA, lamda=LAMDA, gamma=GAMMA,
                                  gamma_asym=GAMMA, eta=ETA, gamma_H=GAMMA_H, mu_H=MU_H,
@@ -160,11 +158,10 @@ if __name__ == "__main__":
                                  alpha=ALPHA, beta_pairwise_mode=BETA_PAIRWISE_MODE,
                                  delta_pairwise_mode=DELTA_PAIRWISE_MODE,
                                  G_Q=G_quarantine, q=0, beta_Q=BETA_Q, isolation_time=10,
-                                 initE=INIT_EXPOSED,seed=1)
-
+                                 initE=INIT_EXPOSED, seed=1)
 
     ISOLATION_LAG_SYMPTOMATIC = 1  # number of days between onset of symptoms and self-isolation of symptomatics
-    ISOLATION_LAG_POSITIVE = 2  # test turn-around time (TAT): number of days between administration of test and isolation of positive cases
+    ISOLATION_LAG_POSITIVE = 2   # test turn-around time (TAT): number of days between administration of test and isolation of positive cases
     ISOLATION_LAG_CONTACT = 0  # number of days between a contact being traced and that contact self-isolating
     INTERVENTION_START_PCT_INFECTED= 0.1/100
     TESTING_COMPLIANCE_RATE_SYMPTOMATIC = 0.5
@@ -232,10 +229,9 @@ if __name__ == "__main__":
                 isolation_lag_symptomatic=ISOLATION_LAG_SYMPTOMATIC, isolation_lag_positive=ISOLATION_LAG_POSITIVE,
                 isolation_groups=households_indices,checkpoints=checkpoints)
 
-
-
-    run_tti_sim(model, T,intervention_start_pct_infected=0.0,isolation_lag_symptomatic=ISOLATION_LAG_SYMPTOMATIC, isolation_lag_positive=ISOLATION_LAG_POSITIVE, isolation_groups=households_indices)
-
+    # run_tti_sim(model, T,intervention_start_pct_infected=0.0,isolation_lag_symptomatic=ISOLATION_LAG_SYMPTOMATIC, isolation_lag_positive=ISOLATION_LAG_POSITIVE, isolation_groups=households_indices)
+    curr_date = time.strftime("%Y_%m_%d")
+    save_model(model, f"model_second_wave_{curr_date}")
 
     results_summary(model)
 
@@ -244,13 +240,13 @@ if __name__ == "__main__":
              'kindergarden back', 'grades 1-4 back', 'minimum-8000']
 
     plt.plot(model.tseries, ((model.numI_sym+model.numH)*9e6)/N)
-    for time,event in zip(time_line,events):
+    for time, event in zip(time_line, events):
         plt.axvline(int(time), 0, 1, c='k')
         plt.text(int(time)+0.1, 0, str(event), rotation=90)
 
     time = numpy.load('time.npy')
     active_casese = numpy.load('active_cases.npy')
-    plt.plot(time-2,active_casese,'-r')
+    plt.plot(time-2, active_casese, '-r')
 
     plt.show()
 

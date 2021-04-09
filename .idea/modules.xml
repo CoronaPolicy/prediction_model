@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/prediction_model.iml" filepath="$PROJECT_DIR$/.idea/prediction_model.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../general_gits/seirsplus/.idea/seirsplus.iml" filepath="$PROJECT_DIR$/../general_gits/seirsplus/.idea/seirsplus.iml" />
     </modules>
   </component>
 </project>
