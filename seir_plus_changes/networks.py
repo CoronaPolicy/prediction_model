@@ -1229,6 +1229,21 @@ def custom_exponential_graph(base_graph=None, scale=100, min_num_edges=0, m=9, n
     
     return graph
 
+
+def prune_graph_per_node_indexes(base_graph, nodes_indexes_to_remove, percentage_removed_edges):
+    """
+    remove edges from nodes with the relevant indexes,
+    we assume that edges are removed if the np.random for them is smaller than percentage_removed_edges
+    """
+    graph = base_graph.copy()
+    for n in nodes_indexes_to_remove:
+        neighbors = list(graph[n].keys())
+        for neighbor in neighbors:
+            if numpy.random.random() <= percentage_removed_edges/100:
+                graph.remove_edge(n, neighbor)
+    return graph
+
+
 #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 

@@ -6,6 +6,7 @@ import networkx
 import time
 import matplotlib.pyplot as plt
 import pickle
+import numpy as np
 from seirsplus.utilities import load_model, save_model
 
 if __name__ == "__main__":
@@ -150,7 +151,7 @@ if __name__ == "__main__":
                                      '70-79': 0.5187,
                                      '80+': 0.7283}
     PCT_FATALITY = [ageGroup_hospitalFatalityRate[ageGroup] for ageGroup in individual_ageGroups]
-
+    node_groups = {k: np.where(np.array(individual_ageGroups) == k)[0] for k in np.unique(individual_ageGroups)}
     model = ExtSEIRSNetworkModel(G=G_baseline, p=P_GLOBALINTXN,
                                  beta=BETA, sigma=SIGMA, lamda=LAMDA, gamma=GAMMA,
                                  gamma_asym=GAMMA, eta=ETA, gamma_H=GAMMA_H, mu_H=MU_H,
@@ -158,7 +159,7 @@ if __name__ == "__main__":
                                  alpha=ALPHA, beta_pairwise_mode=BETA_PAIRWISE_MODE,
                                  delta_pairwise_mode=DELTA_PAIRWISE_MODE,
                                  G_Q=G_quarantine, q=0, beta_Q=BETA_Q, isolation_time=10,
-                                 initE=INIT_EXPOSED, seed=1)
+                                 initE=INIT_EXPOSED, seed=1, node_groups=node_groups)
 
     ISOLATION_LAG_SYMPTOMATIC = 1  # number of days between onset of symptoms and self-isolation of symptomatics
     ISOLATION_LAG_POSITIVE = 2   # test turn-around time (TAT): number of days between administration of test and isolation of positive cases
@@ -205,8 +206,9 @@ if __name__ == "__main__":
                    'G': [G_less_connections_1,G_less_connections_2,
                          G_less_connections_3,G_less_connections_7,
                          G_less_connections_4,G_less_connections_5,G_less_connections_6]}
-
-    #model.run(T=200, checkpoints=checkpoints)
+    vacc_start_time = 10
+    # [vacc days, num per age]
+    # vacc_policy = np.array([[]])
     T = 200
     run_tti_sim(model, T,
                 intervention_start_pct_infected=INTERVENTION_START_PCT_INFECTED,
@@ -227,7 +229,7 @@ if __name__ == "__main__":
                 isolation_compliance_positive_contact=ISOLATION_COMPLIANCE_POSITIVE_CONTACT,
                 isolation_compliance_positive_contactgroupmate=ISOLATION_COMPLIANCE_POSITIVE_CONTACTGROUPMATE,
                 isolation_lag_symptomatic=ISOLATION_LAG_SYMPTOMATIC, isolation_lag_positive=ISOLATION_LAG_POSITIVE,
-                isolation_groups=households_indices,checkpoints=checkpoints)
+                isolation_groups=households_indices, checkpoints=checkpoints)
 
     # run_tti_sim(model, T,intervention_start_pct_infected=0.0,isolation_lag_symptomatic=ISOLATION_LAG_SYMPTOMATIC, isolation_lag_positive=ISOLATION_LAG_POSITIVE, isolation_groups=households_indices)
     curr_date = time.strftime("%Y_%m_%d")
