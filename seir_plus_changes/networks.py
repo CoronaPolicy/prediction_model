@@ -4,6 +4,7 @@ import scipy
 import networkx
 from . import FARZ
 from .models import *
+from typing import List
 
 import matplotlib.pyplot as pyplot
 
@@ -1230,7 +1231,8 @@ def custom_exponential_graph(base_graph=None, scale=100, min_num_edges=0, m=9, n
     return graph
 
 
-def prune_graph_per_node_indexes(base_graph, nodes_indexes_to_remove, percentage_removed_edges):
+def prune_graph_per_node_indexes(base_graph: networkx.Graph, nodes_indexes_to_remove: List,
+                                 percentage_removed_edges: float):
     """
     remove edges from nodes with the relevant indexes,
     we assume that edges are removed if the np.random for them is smaller than percentage_removed_edges
@@ -1239,7 +1241,7 @@ def prune_graph_per_node_indexes(base_graph, nodes_indexes_to_remove, percentage
     for n in nodes_indexes_to_remove:
         neighbors = list(graph[n].keys())
         for neighbor in neighbors:
-            if numpy.random.random() <= percentage_removed_edges/100:
+            if numpy.random.random() <= percentage_removed_edges:
                 graph.remove_edge(n, neighbor)
     return graph
 

@@ -18,7 +18,7 @@ def run_tti_sim(model, T,
                 isolation_compliance_positive_contact=[None], isolation_compliance_positive_contactgroupmate=[None],
                 isolation_lag_symptomatic=1, isolation_lag_positive=1, isolation_lag_contact=0, isolation_groups=None,
                 cadence_testing_days=None, cadence_cycle_length=28, temporal_falseneg_rates=None, checkpoints=None,
-                ):
+                vaccinations_df=None):
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -76,8 +76,7 @@ def run_tti_sim(model, T,
     model.tmax  = T
     running     = True
     while running:
-
-        running = model.run_iteration(checkpoints=checkpoints)
+        running = model.run_iteration(checkpoints=checkpoints, vaccination_update_df=vaccinations_df)
 
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         # Introduce exogenous exposures randomly:
@@ -404,6 +403,7 @@ def run_tti_sim(model, T,
                     numIsolated += 1
 
                 print("\t"+str(numIsolated)+" entered isolation")
+                print(f"\t num vaccinated:{model.numV[-1]}")
                 
             #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

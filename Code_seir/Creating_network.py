@@ -7,6 +7,7 @@ import time
 import matplotlib.pyplot as plt
 import pickle
 import numpy as np
+import pandas as pd
 from seirsplus.utilities import load_model, save_model
 
 if __name__ == "__main__":
@@ -31,7 +32,13 @@ if __name__ == "__main__":
     N = 20000
     INIT_EXPOSED = int((2006/9e6)*N)
     Load_graph = True
-
+    vaccination_data = pd.read_csv("../israel_data/vaccination_data_for_simulation.csv")
+    simulation_start_date = '2020-06-01'
+    vaccination_data['date'] = pd.to_datetime(vaccination_data['date'], format='%Y-%m-%d')
+    vaccination_data['num_day'] = (vaccination_data['date'] -
+                                              pd.to_datetime(simulation_start_date, format='%Y-%m-%d')).dt.days
+    vaccination_data['num_day'] = vaccination_data['num_day'] - 200
+    vaccination_data.iloc[:, 2:-1] = (vaccination_data.iloc[:, 2:-1] * N / 9e6).astype(int)
     if not Load_graph:
         demographic_graphs, individual_ageGroups, households = generate_demographic_contact_network(
             N=N, demographic_data=household_country_data('ISRAEL'),
@@ -206,9 +213,6 @@ if __name__ == "__main__":
                    'G': [G_less_connections_1,G_less_connections_2,
                          G_less_connections_3,G_less_connections_7,
                          G_less_connections_4,G_less_connections_5,G_less_connections_6]}
-    vacc_start_time = 10
-    # [vacc days, num per age]
-    # vacc_policy = np.array([[]])
     T = 200
     run_tti_sim(model, T,
                 intervention_start_pct_infected=INTERVENTION_START_PCT_INFECTED,
@@ -229,7 +233,7 @@ if __name__ == "__main__":
                 isolation_compliance_positive_contact=ISOLATION_COMPLIANCE_POSITIVE_CONTACT,
                 isolation_compliance_positive_contactgroupmate=ISOLATION_COMPLIANCE_POSITIVE_CONTACTGROUPMATE,
                 isolation_lag_symptomatic=ISOLATION_LAG_SYMPTOMATIC, isolation_lag_positive=ISOLATION_LAG_POSITIVE,
-                isolation_groups=households_indices, checkpoints=checkpoints)
+                isolation_groups=households_indices, checkpoints=checkpoints, vaccinations_df=vaccination_data)
 
     # run_tti_sim(model, T,intervention_start_pct_infected=0.0,isolation_lag_symptomatic=ISOLATION_LAG_SYMPTOMATIC, isolation_lag_positive=ISOLATION_LAG_POSITIVE, isolation_groups=households_indices)
     curr_date = time.strftime("%Y_%m_%d")

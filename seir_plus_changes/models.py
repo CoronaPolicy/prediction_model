@@ -6,7 +6,7 @@ import networkx as networkx
 import numpy as numpy
 import scipy as scipy
 import scipy.integrate
-# from networks import prune_graph_per_age
+from seirsplus.networks import prune_graph_per_node_indexes
 
 ########################################################
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@#
@@ -759,6 +759,7 @@ class SEIRSNetworkModel():
                 self.nodeGroupData[groupName] = {'nodes': numpy.array(nodeList),
                                                  'mask': numpy.isin(range(self.numNodes), nodeList).reshape(
                                                      (self.numNodes, 1))}
+                self.nodeGroupData[groupName]['numV'] = numpy.zeros(6 * self.numNodes)
                 self.nodeGroupData[groupName]['numS'] = numpy.zeros(6 * self.numNodes)
                 self.nodeGroupData[groupName]['numE'] = numpy.zeros(6 * self.numNodes)
                 self.nodeGroupData[groupName]['numI'] = numpy.zeros(6 * self.numNodes)
@@ -2042,8 +2043,10 @@ class ExtSEIRSNetworkModel():
         # Each node can undergo 4-6 transitions (sans vitality/re-susceptibility returns to S state),
         # so there are ~numNodes*6 events/timesteps expected; initialize numNodes*6 timestep slots to start
         # (will be expanded during run if needed for some reason)
+        self.vaccination_day = -1
         self.tseries = numpy.zeros(6 * self.numNodes)
         self.numS = numpy.zeros(6 * self.numNodes)
+        self.numV = numpy.array([0])
         self.numE = numpy.zeros(6 * self.numNodes)
         self.numI_pre = numpy.zeros(6 * self.numNodes)
         self.numI_sym = numpy.zeros(6 * self.numNodes)
@@ -3123,13 +3126,16 @@ class ExtSEIRSNetworkModel():
         for group in self.nodeGroupData.keys():
             node_indexes = self.nodeGroupData[group]['nodes']
             current_state = self.X[node_indexes]
-            s_indexes = numpy.where(current_state == self.S)[0]
-            n_vaccinate = numpy.min(s_indexes.size, num_vaccinations_per_age[group])
+            curr_or1 = numpy.logical_or(current_state == self.S, current_state == self.E)
+            curr_or2 = numpy.logical_or(curr_or1, current_state == self.I_pre)
+            curr_or3 = numpy.logical_or(curr_or2, current_state == self.I_asym)
+            s_indexes = numpy.where(curr_or3)[0]
+            n_vaccinate = numpy.min([s_indexes.size, num_vaccinations_per_age[group]])
             indexes_to_vaccinate = numpy.random.choice(s_indexes, size=n_vaccinate)
             indexes.extend(indexes_to_vaccinate)
         return indexes
 
-    def run_iteration(self, checkpoints=None, vaccination_update_matrix=None):
+    def run_iteration(self, checkpoints=None, vaccination_update_df=None):
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         if (checkpoints):
@@ -3173,11 +3179,27 @@ class ExtSEIRSNetworkModel():
         if (self.tidx >= len(self.tseries) - 1):
             # Room has run out in the timeseries storage arrays; double the size of these arrays:
             self.increase_data_series_length()
-        if vaccination_update_matrix is not None:
-            new_vaccinated_indexes = self.get_vaccinated_indexes(vaccination_update_matrix[int(self.t), :])
-
-            new_graph = prune_graph_per_age(vaccination_update_matrix[int(self.t), :], self.G)
-            self.parameters.update({'G': new_graph})
+        if vaccination_update_df is not None:
+            current_time = int(self.t)
+            if self.vaccination_day < current_time:
+                self.vaccination_day = current_time
+                current_vacc = vaccination_update_df[vaccination_update_df['num_day'] == current_time]
+                if current_vacc.size > 0:
+                    num_per_age = current_vacc.values[0, 2:-1]
+                    ages = current_vacc.columns[2:-1]
+                    vacc_dict = {k: v for (k, v) in zip(ages, num_per_age)}
+                else:
+                    ages = vaccination_update_df.columns[2:-1]
+                    vacc_dict = {k: 0 for k in ages}
+                vacc_dict['0-9'] = 0
+                new_vaccinated_indexes = self.get_vaccinated_indexes(vacc_dict)
+                if len(new_vaccinated_indexes) > 0:
+                    new_graph = prune_graph_per_node_indexes(base_graph=self.G,
+                                                             nodes_indexes_to_remove=new_vaccinated_indexes,
+                                                             percentage_removed_edges=1)
+                    self.numV = numpy.append(self.numV + len(new_vaccinated_indexes))
+                    self.parameters.update({'G': new_graph})
+                self.update_parameters()
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         # Generate 2 random numbers uniformly distributed in (0,1)
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
