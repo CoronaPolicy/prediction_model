@@ -403,7 +403,8 @@ def run_tti_sim(model, T,
                     numIsolated += 1
 
                 print("\t"+str(numIsolated)+" entered isolation")
-                print(f"\t num vaccinated:{model.numV[-1]}")
+                print(f"\t{model.numV[-1]} are vaccinated")
+                print(f"\t{model.numS[model.tidx]} are still susceptible")
                 
             #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

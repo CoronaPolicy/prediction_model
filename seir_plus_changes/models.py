@@ -6,7 +6,7 @@ import networkx as networkx
 import numpy as numpy
 import scipy as scipy
 import scipy.integrate
-from seirsplus.networks import prune_graph_per_node_indexes
+from seirsplus.networks import prune_graph_per_node_indexes, custom_exponential_graph
 
 ########################################################
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@#
@@ -2008,7 +2008,8 @@ class ExtSEIRSNetworkModel():
                  initE=0, initI_pre=0, initI_sym=0, initI_asym=0, initH=0, initR=0, initF=0,
                  initQ_S=0, initQ_E=0, initQ_pre=0, initQ_sym=0, initQ_asym=0, initQ_R=0,
                  o=0, prevalence_ext=0,
-                 transition_mode='exponential_rates', node_groups=None, store_Xseries=False, seed=None):
+                 transition_mode='exponential_rates', node_groups=None, store_Xseries=False, seed=None,
+                 checkpoints=None, per_remove_vacc_edges=0.9):
 
         if (seed is not None):
             numpy.random.seed(seed)
@@ -2038,6 +2039,10 @@ class ExtSEIRSNetworkModel():
                            'initQ_sym': initQ_sym, 'initQ_asym': initQ_asym, 'initQ_R': initQ_R,
                            'o': o, 'prevalence_ext': prevalence_ext}
         self.update_parameters()
+        self.checkpoint_index = 0
+        self.vacc_indexes = set()
+        self.vacc_remove_edges = {}
+        self.per_remove_vacc_edges = per_remove_vacc_edges
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         # Each node can undergo 4-6 transitions (sans vitality/re-susceptibility returns to S state),
@@ -3121,64 +3126,56 @@ class ExtSEIRSNetworkModel():
     # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
     # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-    def get_vaccinated_indexes(self, num_vaccinations_per_age):
-        indexes = []
+    def get_optional_vaccination_indexes(self, optional_indexes):
+        current_state = self.X[optional_indexes]
+        curr_or1 = numpy.logical_or(current_state == self.S, current_state == self.E)
+        curr_or2 = numpy.logical_or(curr_or1, current_state == self.I_pre)
+        curr_or3 = numpy.logical_or(curr_or2, current_state == self.I_asym)
+        s_indexes = optional_indexes[numpy.where(curr_or3)[0]]
+        return set(s_indexes)
+
+    def add_new_vaccinated_indexes(self, num_vaccinations_per_age):
         for group in self.nodeGroupData.keys():
             node_indexes = self.nodeGroupData[group]['nodes']
-            current_state = self.X[node_indexes]
-            curr_or1 = numpy.logical_or(current_state == self.S, current_state == self.E)
-            curr_or2 = numpy.logical_or(curr_or1, current_state == self.I_pre)
-            curr_or3 = numpy.logical_or(curr_or2, current_state == self.I_asym)
-            s_indexes = numpy.where(curr_or3)[0]
-            n_vaccinate = numpy.min([s_indexes.size, num_vaccinations_per_age[group]])
-            indexes_to_vaccinate = numpy.random.choice(s_indexes, size=n_vaccinate)
-            indexes.extend(indexes_to_vaccinate)
-        return indexes
+            set_optional_indexes = self.get_optional_vaccination_indexes(node_indexes)
+            already_vacc = self.vacc_indexes.copy()
+            indexes_not_vacc = set_optional_indexes.difference(already_vacc)
+            # indexes_not_vacc = numpy.array([i for i in s_indexes if i not in already_vacc])
+            n_vaccinate = numpy.min([len(indexes_not_vacc), num_vaccinations_per_age[group]])
+            # if n_vaccinate == 0:
+            #     print(f"t:{self.t}, can not find who to vaccinate for age group:{group}")
+            indexes_to_vaccinate = numpy.random.choice(list(indexes_not_vacc), size=n_vaccinate)
+            self.vacc_indexes.update(indexes_to_vaccinate)
+            for i in indexes_to_vaccinate:
+                self.vacc_remove_edges[i] = (numpy.random.random() <= self.per_remove_vacc_edges)
 
     def run_iteration(self, checkpoints=None, vaccination_update_df=None):
-
-        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         if (checkpoints):
-            self.checkpoints = checkpoints
-
-        if (self.checkpoints):
-            numCheckpoints = len(self.checkpoints['t'])
-            for chkpt_param, chkpt_values in self.checkpoints.items():
+            numCheckpoints = len(checkpoints['t'])
+            for chkpt_param, chkpt_values in checkpoints.items():
                 assert (isinstance(chkpt_values, (list, numpy.ndarray)) and len(
                     chkpt_values) == numCheckpoints), "Expecting a list of values with length equal to number of checkpoint times (" + str(
                     numCheckpoints) + ") for each checkpoint parameter."
-            checkpointIdx = numpy.searchsorted(self.checkpoints['t'],
-                                               self.t) - 1  # Finds 1st index in list greater than given val
-            checkpointIdx = numpy.max([checkpointIdx, 0])
-            if (checkpointIdx >= numCheckpoints):
+            if (self.checkpoint_index >= numCheckpoints):
                 # We are out of checkpoints, stop checking them:
                 checkpoints = None
+                checkpointTime = self.tmax
             else:
-                checkpointTime = self.checkpoints['t'][checkpointIdx]
-
-        # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-        if (self.checkpoints) and (checkpoints):
-            if (self.t >= checkpointTime) and not self.checkpoints['G'][checkpointIdx] == self.parameters['G']:
+                checkpointTime = checkpoints['t'][self.checkpoint_index]
+            if self.t >= checkpointTime:
                 print("---------------------------changed the graph at time {}----------------------".format(self.t))
                 # A checkpoint has been reached, update param values:
                 for param in list(self.parameters.keys()):
-                    if (param in list(checkpoints.keys())):
-                        self.parameters.update({param: checkpoints[param][checkpointIdx]})
+                    if param in list(checkpoints.keys()):
+                        self.parameters.update({param: checkpoints[param][self.checkpoint_index]})
                 # Update parameter data structures and scenario flags:
                 self.update_parameters()
-                # Update the next checkpoint time:
-                checkpointIdx = numpy.searchsorted(self.checkpoints['t'],
-                                                   self.t)  # Finds 1st index in list greater than given val
-                if (checkpointIdx >= numCheckpoints):
-                    # We are out of checkpoints, stop checking them:
-                    checkpoints = None
-                else:
-                    checkpointTime = self.checkpoints['t'][checkpointIdx]
+                self.checkpoint_index += 1
 
-        if (self.tidx >= len(self.tseries) - 1):
+        if self.tidx >= len(self.tseries) - 1:
             # Room has run out in the timeseries storage arrays; double the size of these arrays:
             self.increase_data_series_length()
+        # remove edges from vaccinate
         if vaccination_update_df is not None:
             current_time = int(self.t)
             if self.vaccination_day < current_time:
@@ -3192,12 +3189,12 @@ class ExtSEIRSNetworkModel():
                     ages = vaccination_update_df.columns[2:-1]
                     vacc_dict = {k: 0 for k in ages}
                 vacc_dict['0-9'] = 0
-                new_vaccinated_indexes = self.get_vaccinated_indexes(vacc_dict)
-                if len(new_vaccinated_indexes) > 0:
+                self.add_new_vaccinated_indexes(vacc_dict)
+                if len(self.vacc_indexes) > 0:
                     new_graph = prune_graph_per_node_indexes(base_graph=self.G,
-                                                             nodes_indexes_to_remove=new_vaccinated_indexes,
-                                                             percentage_removed_edges=1)
-                    self.numV = numpy.append(self.numV + len(new_vaccinated_indexes))
+                                                             nodes_indexes_to_remove=self.vacc_indexes,
+                                                             should_remove_edges_dict=self.vacc_remove_edges)
+                    self.numV = numpy.append(self.numV, len(self.vacc_indexes))
                     self.parameters.update({'G': new_graph})
                 self.update_parameters()
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

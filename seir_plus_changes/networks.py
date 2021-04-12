@@ -4,7 +4,7 @@ import scipy
 import networkx
 from . import FARZ
 from .models import *
-from typing import List
+from typing import List, Dict
 
 import matplotlib.pyplot as pyplot
 
@@ -692,7 +692,9 @@ def generate_demographic_contact_network_costom_israel(N, demographic_data, laye
     return graphs, individualAgeBracketLabels, households
 
 
-def generate_demographic_contact_network(N, demographic_data, layer_generator='FARZ', layer_info=None, distancing_scales=[], isolation_groups=[], verbose=False):
+def generate_demographic_contact_network(N, demographic_data, layer_generator='FARZ',
+                                         layer_info=None, distancing_scales=[], isolation_groups=[], verbose=False,
+                                         households_data=None, number_of_people_each_household=None):
 
     graphs = {}
 
@@ -711,33 +713,35 @@ def generate_demographic_contact_network(N, demographic_data, layer_generator='F
     # types of families and number of people in each one of the familes in israel
     # this statstics follow https://www.cbs.gov.il/he/mediarelease/pages/2020/%D7%9E%D7%A9%D7%A4%D7%97%D7%95%D7%AA-%D7%91%D7%99%D7%A9%D7%A8%D7%90%D7%9C-%D7%A0%D7%AA%D7%95%D7%A0%D7%99%D7%9D-%D7%9C%D7%A8%D7%92%D7%9C-%D7%99%D7%95%D7%9D-%D7%94%D7%9E%D7%A9%D7%A4%D7%97%D7%94.aspx
 
-    alone_parma = 0.3
-    couples_without_kids_param = 0.85
-    kids_left_house_p = 0.36
-    old_kids = 0.3
-    two_kids_young = 0.28
-    two_kids_old = 0.032
 
-    three_kids_young = 0.37
-    three_kids_old = 0.1
+    if number_of_people_each_household is None:
+        number_of_people_each_household = [1, 3, 4, 2, 2, 3, 3, 4, 5, 8]
+    if households_data is None:
+        alone_parma = 0.3
+        couples_without_kids_param = 0.85
+        kids_left_house_p = 0.36
+        old_kids = 0.3
+        two_kids_young = 0.28
+        two_kids_old = 0.032
 
-    four_kids_young = 0.37
-    four_kids_old = 0.1
+        three_kids_young = 0.37
+        three_kids_old = 0.1
 
-    number_of_people_each_household = [1, 3, 4, 2, 2, 3, 3, 4, 5, 8]
-    households_data = \
-        {
-        'alone': {0.05 * 0.9: [0, 0, alone_parma, 0, 0, 0 * (1 - alone_parma) / 8,3 * (1 - alone_parma) / 8,2 * (1 - alone_parma) / 8, 3 * (1 - alone_parma) / 8]},
-        'students_app': {0.05 * 0.1: [0, 0.2, 0.8, 0, 0, 0, 0, 0, 0]},
-        'soldier': {0.015: [0.0, 1, 0.0, 0, 0, 0, 0, 0, 0]},
-        'couples_without_kids': {0.935 * 0.28 * 0.25: [0, 0, couples_without_kids_param, 1 - couples_without_kids_param, 0, 0, 0, 0, 0]},
-        'couples_kids_left_the_house': {0.935 * 0.28 * 0.75: [0, 0, 0, 0, 0, kids_left_house_p, 16 * (1 - kids_left_house_p) / 30,10 * (1 - kids_left_house_p) / 30, 4 * (1 - kids_left_house_p) / 30]},
-        'couples_with_one_young_kid': {0.935 * 0.18 * 0.9: [0.7, 0.3, 0.5, 0.5, 0, 0, 0, 0, 0]},
-        'couples_with_one_old_kid': {0.935 * 0.18 * 0.1: [0.0, 1.0, 0.0, old_kids, 1 - old_kids, 0, 0, 0, 0]},
-        'couples_with_two_kid': {0.935 * 0.19: [0.5, 0.45, 0.05, two_kids_young, 1 - two_kids_young - two_kids_old, two_kids_old, 0, 0, 0]},
-        'couples_with_three_kid': {0.935 * 0.17: [0.5, 0.45, 0.05, three_kids_young, 1 - three_kids_old - three_kids_young, three_kids_old, 0,0, 0]},
-        'couples_with_four_kid_pluse': {0.935 * 0.18: [0.5, 0.45, 0.05, three_kids_young, 1 - three_kids_old - three_kids_young, three_kids_old, 0,0, 0]},
-    }
+        four_kids_young = 0.37
+        four_kids_old = 0.1
+        households_data = \
+            {
+            'alone': {0.05 * 0.9: [0, 0, alone_parma, 0, 0, 0 * (1 - alone_parma) / 8,3 * (1 - alone_parma) / 8,2 * (1 - alone_parma) / 8, 3 * (1 - alone_parma) / 8]},
+            'students_app': {0.05 * 0.1: [0, 0.2, 0.8, 0, 0, 0, 0, 0, 0]},
+            'soldier': {0.015: [0.0, 1, 0.0, 0, 0, 0, 0, 0, 0]},
+            'couples_without_kids': {0.935 * 0.28 * 0.25: [0, 0, couples_without_kids_param, 1 - couples_without_kids_param, 0, 0, 0, 0, 0]},
+            'couples_kids_left_the_house': {0.935 * 0.28 * 0.75: [0, 0, 0, 0, 0, kids_left_house_p, 16 * (1 - kids_left_house_p) / 30,10 * (1 - kids_left_house_p) / 30, 4 * (1 - kids_left_house_p) / 30]},
+            'couples_with_one_young_kid': {0.935 * 0.18 * 0.9: [0.7, 0.3, 0.5, 0.5, 0, 0, 0, 0, 0]},
+            'couples_with_one_old_kid': {0.935 * 0.18 * 0.1: [0.0, 1.0, 0.0, old_kids, 1 - old_kids, 0, 0, 0, 0]},
+            'couples_with_two_kid': {0.935 * 0.19: [0.5, 0.45, 0.05, two_kids_young, 1 - two_kids_young - two_kids_old, two_kids_old, 0, 0, 0]},
+            'couples_with_three_kid': {0.935 * 0.17: [0.5, 0.45, 0.05, three_kids_young, 1 - three_kids_old - three_kids_young, three_kids_old, 0,0, 0]},
+            'couples_with_four_kid_pluse': {0.935 * 0.18: [0.5, 0.45, 0.05, three_kids_young, 1 - three_kids_old - three_kids_young, three_kids_old, 0,0, 0]},
+        }
 
     households     = []    # List of dicts storing household data structures and metadata
     homelessNodes  = N     # Number of individuals to place in households
@@ -1222,7 +1226,7 @@ def custom_exponential_graph(base_graph=None, scale=100, min_num_edges=0, m=9, n
     for node in graph:
         neighbors = list(graph[node].keys())
         if(len(neighbors) > 0):
-            quarantineEdgeNum = int( max(min(numpy.random.exponential(scale=scale, size=1), len(neighbors)), min_num_edges) )
+            quarantineEdgeNum = int(max(min(numpy.random.exponential(scale=scale, size=1), len(neighbors)), min_num_edges))
             quarantineKeepNeighbors = numpy.random.choice(neighbors, size=quarantineEdgeNum, replace=False)
             for neighbor in neighbors:
                 if(neighbor not in quarantineKeepNeighbors):
@@ -1231,8 +1235,8 @@ def custom_exponential_graph(base_graph=None, scale=100, min_num_edges=0, m=9, n
     return graph
 
 
-def prune_graph_per_node_indexes(base_graph: networkx.Graph, nodes_indexes_to_remove: List,
-                                 percentage_removed_edges: float):
+def prune_graph_per_node_indexes(base_graph: networkx.Graph, nodes_indexes_to_remove: set,
+                                 should_remove_edges_dict: Dict):
     """
     remove edges from nodes with the relevant indexes,
     we assume that edges are removed if the np.random for them is smaller than percentage_removed_edges
@@ -1240,9 +1244,11 @@ def prune_graph_per_node_indexes(base_graph: networkx.Graph, nodes_indexes_to_re
     graph = base_graph.copy()
     for n in nodes_indexes_to_remove:
         neighbors = list(graph[n].keys())
-        for neighbor in neighbors:
-            if numpy.random.random() <= percentage_removed_edges:
+        if should_remove_edges_dict[n]:
+            for neighbor in neighbors:
                 graph.remove_edge(n, neighbor)
+            if networkx.is_isolate(graph, n) is not True:
+                print(f"did not isolate node:{n} properly when trying to vaccinate")
     return graph
 
 

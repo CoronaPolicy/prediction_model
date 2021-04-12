@@ -1,6 +1,7 @@
 import numpy
 import matplotlib.pyplot as pyplot
 import pickle
+from scipy.interpolate import interp1d
 
 def gamma_dist(mean, coeffvar, N):
     scale = mean * coeffvar ** 2
@@ -79,3 +80,12 @@ def load_model(path_name):
     with open(f"{path_name}.pickle", 'rb') as handle:
         model = pickle.load(handle)
     return model
+
+
+def convert_percentage_to_scale(percentage: numpy.array, per_to_scale_data: numpy.array) -> numpy.array:
+    x = per_to_scale_data[0, :]  # scale known
+    y = per_to_scale_data[1, :]  # percentage known
+    f = interp1d(x, y)
+    y_out = f(percentage)
+    y_out = numpy.round(y_out, 1)
+    return y_out
