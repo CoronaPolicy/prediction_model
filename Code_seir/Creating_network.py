@@ -23,13 +23,16 @@ if __name__ == "__main__":
     01.10 -------------------------maximum 72k  - 120
     17.10-------------------------kindergarden back (G_85_prec) -137
     1.11-------------------------grades 1-4 back (G_70_prec) - 150
+    Third wave:
     10.11 minimum---------------8000  - 160
+    20.12 ---------------------- started vaccinations - 200
+    
     
     time = [5,30,60,90,115,120,137,150,160]
     event= ['hofesh gadol', 'close <50,20', 'close work', 'schools back', 'full seger', 'maximum-72k','kindergarden back','grades 1-4 back','minimum-8000']
     G = [100,10,4,10,0.5,1,1.5]
     """
-    N = 20000
+    N = 30000
     INIT_EXPOSED = int((2006/9e6)*N)
     Load_graph = True
     vaccination_data = pd.read_csv("../israel_data/vaccination_data_for_simulation.csv")
@@ -37,8 +40,12 @@ if __name__ == "__main__":
     vaccination_data['date'] = pd.to_datetime(vaccination_data['date'], format='%Y-%m-%d')
     vaccination_data['num_day'] = (vaccination_data['date'] -
                                               pd.to_datetime(simulation_start_date, format='%Y-%m-%d')).dt.days
-    vaccination_data['num_day'] = vaccination_data['num_day'] - 200
-    vaccination_data.iloc[:, 2:-1] = (vaccination_data.iloc[:, 2:-1] * N / 9e6).astype(int)
+    vaccination_data['num_day'] = vaccination_data['num_day'] - 100
+
+    vaccination_data.iloc[:, 2:-1] = np.ceil(vaccination_data.iloc[:, 2:-1] * N / 9e6).astype(int)
+    # vaccination_data.iloc[:, 2:-1] = np.ceil(vaccination_data.iloc[:, 2:-1]).astype(int)
+    vaccination_data.iloc[1:, 2:-1] = vaccination_data.iloc[1:, 2:-1] - vaccination_data.iloc[:-1, 2:-1].values
+
     if not Load_graph:
         demographic_graphs, individual_ageGroups, households = generate_demographic_contact_network(
             N=N, demographic_data=household_country_data('ISRAEL'),
@@ -55,32 +62,32 @@ if __name__ == "__main__":
 
         G_quarantine = demographic_graphs['distancingScale0.5']
 
-        networkx.write_gpickle(G_baseline, "G_baseline.gpickle")
-        networkx.write_gpickle(G_less_connections_1, "G_less_connections_1.gpickle")
-        networkx.write_gpickle(G_less_connections_2, "G_less_connections_2.gpickle")
-        networkx.write_gpickle(G_less_connections_3, "G_less_connections_3.gpickle")
-        networkx.write_gpickle(G_less_connections_4, "G_less_connections_4.gpickle")
-        networkx.write_gpickle(G_less_connections_5, "G_less_connections_5.gpickle")
-        networkx.write_gpickle(G_less_connections_6, "G_less_connections_6.gpickle")
-        networkx.write_gpickle(G_less_connections_7, "G_less_connections_7.gpickle")
+        networkx.write_gpickle(G_baseline, "g_second_lockdown/G_baseline.gpickle")
+        networkx.write_gpickle(G_less_connections_1, "g_second_lockdown/G_less_connections_1.gpickle")
+        networkx.write_gpickle(G_less_connections_2, "g_second_lockdown/G_less_connections_2.gpickle")
+        networkx.write_gpickle(G_less_connections_3, "g_second_lockdown/G_less_connections_3.gpickle")
+        networkx.write_gpickle(G_less_connections_4, "g_second_lockdown/G_less_connections_4.gpickle")
+        networkx.write_gpickle(G_less_connections_5, "g_second_lockdown/G_less_connections_5.gpickle")
+        networkx.write_gpickle(G_less_connections_6, "g_second_lockdown/G_less_connections_6.gpickle")
+        networkx.write_gpickle(G_less_connections_7, "g_second_lockdown/G_less_connections_7.gpickle")
 
-        networkx.write_gpickle(G_quarantine, "G_quarantine.gpickle")
+        networkx.write_gpickle(G_quarantine, "g_second_lockdown/G_quarantine.gpickle")
 
-        pickle.dump(households, open("households.p", "wb"))  # save it into a file named save.p
-        pickle.dump(individual_ageGroups, open("individual_ageGroups.p", "wb"))
+        pickle.dump(households, open("g_second_lockdown/households.p", "wb"))  # save it into a file named save.p
+        pickle.dump(individual_ageGroups, open("g_second_lockdown/individual_ageGroups.p", "wb"))
     else:
-        G_baseline = networkx.read_gpickle("G_baseline.gpickle")
-        G_less_connections_1 = networkx.read_gpickle("G_less_connections_1.gpickle")
-        G_less_connections_2 = networkx.read_gpickle("G_less_connections_2.gpickle")
-        G_less_connections_3 = networkx.read_gpickle("G_less_connections_3.gpickle")
-        G_less_connections_4 = networkx.read_gpickle("G_less_connections_4.gpickle")
-        G_less_connections_5 = networkx.read_gpickle("G_less_connections_5.gpickle")
-        G_less_connections_6 = networkx.read_gpickle("G_less_connections_6.gpickle")
-        G_less_connections_7 = networkx.read_gpickle("G_less_connections_7.gpickle")
+        G_baseline = networkx.read_gpickle("g_second_lockdown/G_baseline.gpickle")
+        G_less_connections_1 = networkx.read_gpickle("g_second_lockdown/G_less_connections_1.gpickle")
+        G_less_connections_2 = networkx.read_gpickle("g_second_lockdown/G_less_connections_2.gpickle")
+        G_less_connections_3 = networkx.read_gpickle("g_second_lockdown/G_less_connections_3.gpickle")
+        G_less_connections_4 = networkx.read_gpickle("g_second_lockdown/G_less_connections_4.gpickle")
+        G_less_connections_5 = networkx.read_gpickle("g_second_lockdown/G_less_connections_5.gpickle")
+        G_less_connections_6 = networkx.read_gpickle("g_second_lockdown/G_less_connections_6.gpickle")
+        G_less_connections_7 = networkx.read_gpickle("g_second_lockdown/G_less_connections_7.gpickle")
 
-        G_quarantine = networkx.read_gpickle("G_quarantine.gpickle")
-        households = pickle.load(open("households.p", "rb"))
-        individual_ageGroups = pickle.load( open("individual_ageGroups.p", "rb"))
+        G_quarantine = networkx.read_gpickle("g_second_lockdown/G_quarantine.gpickle")
+        households = pickle.load(open("g_second_lockdown/households.p", "rb"))
+        individual_ageGroups = pickle.load(open("g_second_lockdown/individual_ageGroups.p", "rb"))
     households_indices = [household['indices'] for household in households]
     #plot_degree_distn(G_baseline, max_degree=100)
     #plot_degree_distn(G_quarantine, max_degree=100)
@@ -209,10 +216,22 @@ if __name__ == "__main__":
     #time = [5,30,60,90,115,137,150]
     #G = [100,10,4,10,0.5,1,1.5]
 
-    checkpoints = {'t': [5,30,60,90,115,137,150],
-                   'G': [G_less_connections_1,G_less_connections_2,
-                         G_less_connections_3,G_less_connections_7,
-                         G_less_connections_4,G_less_connections_5,G_less_connections_6]}
+    # 1 : 300,
+    # 2 : 9,
+    # 3: 3,
+    # 4: 0.5,
+    # 5: 5,
+    # 6: 10,
+    # 7 :11
+    checkpoints = {'t': [5, 30, 60, 90, 115, 137, 150],
+                   'G': [G_less_connections_1,
+                         G_less_connections_2,
+                         G_less_connections_3,
+                         G_less_connections_7,
+                         G_less_connections_4,
+                         G_less_connections_5,
+                         G_less_connections_6],
+                   'dis_per': [300, 9, 3, 11, 0.5, 5, 10]}
     T = 200
     run_tti_sim(model, T,
                 intervention_start_pct_infected=INTERVENTION_START_PCT_INFECTED,
@@ -233,11 +252,10 @@ if __name__ == "__main__":
                 isolation_compliance_positive_contact=ISOLATION_COMPLIANCE_POSITIVE_CONTACT,
                 isolation_compliance_positive_contactgroupmate=ISOLATION_COMPLIANCE_POSITIVE_CONTACTGROUPMATE,
                 isolation_lag_symptomatic=ISOLATION_LAG_SYMPTOMATIC, isolation_lag_positive=ISOLATION_LAG_POSITIVE,
-                isolation_groups=households_indices, checkpoints=checkpoints, vaccinations_df=vaccination_data)
+                isolation_groups=households_indices, checkpoints=checkpoints, vaccinations_df=vaccination_data)  #vaccination_data
 
-    # run_tti_sim(model, T,intervention_start_pct_infected=0.0,isolation_lag_symptomatic=ISOLATION_LAG_SYMPTOMATIC, isolation_lag_positive=ISOLATION_LAG_POSITIVE, isolation_groups=households_indices)
     curr_date = time.strftime("%Y_%m_%d")
-    save_model(model, f"model_second_wave_{curr_date}")
+    save_model(model, f"with_vacc_model_second_wave_{curr_date}")
 
     results_summary(model)
 
@@ -256,6 +274,14 @@ if __name__ == "__main__":
 
     plt.show()
 
+    age_dist = np.array([0.197,0.181,0.135,0.123,0.121,0.084,0.081,0.050,0.028])
+    for num, key in enumerate(model.nodeGroupData.keys()):
+        mean_age = np.mean(model.nodeGroupData[key]['numPositive']/(model.numPositive+1e-5))
+
+
+        plt.bar(key,(mean_age/age_dist[num]).astype(float))
+    plt.show()
+    model.numPositive
     fig, ax = model.figure_infections(combine_Q_infected=False)
     plt.show()
     """
