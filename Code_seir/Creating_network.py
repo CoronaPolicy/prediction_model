@@ -32,9 +32,9 @@ if __name__ == "__main__":
     event= ['hofesh gadol', 'close <50,20', 'close work', 'schools back', 'full seger', 'maximum-72k','kindergarden back','grades 1-4 back','minimum-8000']
     G = [100,10,4,10,0.5,1,1.5]
     """
-    N = 30000
+    N = 10000
     INIT_EXPOSED = int((2006/9e6)*N)
-    Load_graph = True
+    Load_graph = False
     vaccination_data = pd.read_csv("../israel_data/vaccination_data_for_simulation.csv")
     simulation_start_date = '2020-06-01'
     vaccination_data['date'] = pd.to_datetime(vaccination_data['date'], format='%Y-%m-%d')

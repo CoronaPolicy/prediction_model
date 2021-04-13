@@ -341,13 +341,14 @@ def run_tti_sim(model, T,
                             #----------------------------------------
                             # Add the groupmates of this positive node to the isolation group:
                             #----------------------------------------  
-                            if(isolation_groups is not None and any(isolation_compliance_positive_groupmate)):
+                            if(isolation_groups is not None and any(isolation_compliance_positive_groupmate) ):
                                 isolationGroupmates = next((group for group in isolation_groups if testNode in group), None)
-                                for isolationGroupmate in isolationGroupmates:
-                                    if(isolationGroupmate != testNode):
-                                        if(isolation_compliance_positive_groupmate[isolationGroupmate]):
-                                            numIsolated_positiveGroupmate += 1
-                                            newIsolationGroup_positive.append(isolationGroupmate)
+                                if isolationGroupmates is not None:
+                                    for isolationGroupmate in isolationGroupmates:
+                                        if(isolationGroupmate != testNode):
+                                            if(isolation_compliance_positive_groupmate[isolationGroupmate]):
+                                                numIsolated_positiveGroupmate += 1
+                                                newIsolationGroup_positive.append(isolationGroupmate)
 
                             #----------------------------------------  
                             # Add this node's neighbors to the contact tracing pool:

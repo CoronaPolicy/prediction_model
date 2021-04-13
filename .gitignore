@@ -132,3 +132,4 @@ dmypy.json
 israel_data/old_files
 Code_seir/g_second_lockdown
 Code_seir/g_third_lockdown
+/Code_seir/g_third_lockdown/
