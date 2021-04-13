@@ -1,0 +1,44 @@
+General_data:
+  vaccination_data : "../israel_data/vaccination_data_for_simulation.csv"
+  simulation_start_date : '2020-11-10'
+  Load_graph :
+    status: False
+    directory: "g_third_lockdown"
+  Save_graph :
+    status: False
+    directory: "g_third_lockdown"
+  plot:
+    status: False
+  optimize:
+    status: True
+    health_parameters : True
+    Number: 10
+model_param:
+  General:
+    INTERVENTION_START_PCT_INFECTED :  0.001
+    TRACING_COMPLIANCE_RATE : 0.8
+    AVERAGE_INTRODUCTIONS_PER_DAY : 0
+    PCT_CONTACTS_TO_TRACE : 0.5  # percentage of primary cases' contacts that are traced
+    TRACING_LAG : 2  # number of cadence testing days between primary tests and tracing tests
+  Testing:
+    TESTING_CADENCE : 'everyday'  # how often to do tracing testing and random testing
+    PCT_TESTED_PER_DAY : 0.01  # max daily test allotment defined as a percent of population size
+    TEST_FALSENEG_RATE : 'temporal'  # test false negative rate, will use FN rate that varies with disease time
+    MAX_PCT_TESTS_FOR_SYMPTOMATICS : 1.0  # max percent of daily test allotment to use on self-reporting symptomatics
+    MAX_PCT_TESTS_FOR_TRACES : 1.0  # max percent of daily test allotment to use on contact traces
+    RANDOM_TESTING_DEGREE_BIAS : 0  # magnitude of degree bias in random selections for testing, none here
+    TESTING_COMPLIANCE_RATE_SYMPTOMATIC: 0.5
+    TESTING_COMPLIANCE_RATE_TRACED: 1.0
+    TESTING_COMPLIANCE_RATE_RANDOM: 0.8
+  ISOLATION:
+    ISOLATION_COMPLIANCE_RATE_SYMPTOMATIC_INDIVIDUAL : 0.3
+    ISOLATION_COMPLIANCE_RATE_SYMPTOMATIC_GROUPMATE : 0.0
+    ISOLATION_COMPLIANCE_RATE_POSITIVE_INDIVIDUAL : 0.8
+    ISOLATION_COMPLIANCE_RATE_POSITIVE_GROUPMATE : 0.8
+    ISOLATION_COMPLIANCE_RATE_POSITIVE_CONTACT : 0.8
+    ISOLATION_COMPLIANCE_RATE_POSITIVE_CONTACTGROUPMATE : 0.0
+    ISOLATION_LAG_SYMPTOMATIC: 1  # number of days between onset of symptoms and self-isolation of symptomatics
+    ISOLATION_LAG_POSITIVE: 2   # test turn-around time (TAT): number of days between administration of test and isolation of positive cases
+    ISOLATION_LAG_CONTACT: 0  # number of days between a contact being traced and that contact self-isolating
+
+
