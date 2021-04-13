@@ -747,8 +747,11 @@ def generate_demographic_contact_network(N, demographic_data, layer_generator='F
     homelessNodes  = N     # Number of individuals to place in households
     curMemberIndex = 0
     for num,(keys,values) in enumerate(households_data.items()):
-        precent_group = numpy.array(list(values.items()))[:, 0][0]
-        p_ages = numpy.array(list(values.items()))[:, 1][0]
+
+        precent_group = values[0]
+        p_ages_kids = values[1]
+        p_ages_parents =values[2]
+
         number_of_people_in_group = int(N * precent_group)
         num_of_people_in_house = number_of_people_each_household[num]
         number_of_housholds=int(number_of_people_in_group/num_of_people_in_house)
@@ -759,7 +762,7 @@ def generate_demographic_contact_network(N, demographic_data, layer_generator='F
                 household = {}
                 household['situation'] = keys
                 household['ageBrackets'] = []
-                temp=list(numpy.random.choice(age_groups, p=p_ages, size=num_of_people_in_house))
+                temp=list(numpy.random.choice(age_groups, p=p_ages_parents, size=num_of_people_in_house))
                 for j in temp:
                     household['ageBrackets'].append(j)
                 household['size'] = num_of_people_in_house
@@ -772,8 +775,8 @@ def generate_demographic_contact_network(N, demographic_data, layer_generator='F
                 household = {}
                 household['situation'] = keys
                 household['ageBrackets'] = []
-                kids_choise = numpy.random.choice(list(age_groups)[:2], p=p_ages[:2], size=number_of_kids)
-                adults_choise = numpy.random.choice(list(age_groups)[2:], p=p_ages[2:],
+                kids_choise = numpy.random.choice(list(age_groups)[:len(p_ages_kids)], p=p_ages_kids, size=number_of_kids)
+                adults_choise = numpy.random.choice(list(age_groups), p=p_ages_parents,
                                                  size=int(num_of_people_in_house - number_of_kids))
                 temp=list(adults_choise)+list(kids_choise)
                 for j in temp:
@@ -789,8 +792,8 @@ def generate_demographic_contact_network(N, demographic_data, layer_generator='F
                     break
                 household['situation'] = keys
                 household['ageBrackets'] = []
-                kids_choise = numpy.random.choice(list(age_groups)[:3], p=p_ages[:3], size=number_of_kids)
-                adults_choise = numpy.random.choice(list(age_groups)[3:], p=p_ages[3:],
+                kids_choise = numpy.random.choice(list(age_groups)[:len(p_ages_kids)], p=p_ages_kids, size=number_of_kids)
+                adults_choise = numpy.random.choice(list(age_groups), p=p_ages_parents,
                                                  size=int(num_of_people_in_house - number_of_kids))
                 temp=list(adults_choise)+list(kids_choise)
                 for j in temp:
@@ -800,7 +803,7 @@ def generate_demographic_contact_network(N, demographic_data, layer_generator='F
                 homelessNodes-=num_of_people_in_house
 
     if homelessNodes>0:
-        prob = numpy.array(list(households_data['alone'].items()))[:, 1][0]
+        prob = households_data['alone'][2]
         for i in range(homelessNodes):
             household['situation'] ='alone'
             household['ageBrackets'] = []
