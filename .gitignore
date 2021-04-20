@@ -130,6 +130,8 @@ dmypy.json
 
 # my old files
 israel_data/old_files
-Code_seir/g_second_lockdown
-Code_seir/g_third_lockdown
-/Code_seir/g_third_lockdown/
+Code_seir/old_files/g_second_lockdown
+Code_seir/old_files/g_third_lockdown
+/Code_seir/old_files/g_third_lockdown/
+/Code_seir/old_files/
+/Code_seir/third_wave_simulation/vacc_policy/

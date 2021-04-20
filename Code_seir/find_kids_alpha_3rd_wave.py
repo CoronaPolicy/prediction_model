@@ -217,8 +217,8 @@ if __name__ == "__main__":
             g = demographic_graphs[f'distancingScale{s}']
             graphs_for_sim.append(g.copy())
         G_quarantine = graphs_for_sim.pop()
-        pickle.dump(households, open("g_third_lockdown/households.p", "wb"))  # save it into a file named save.p
-        pickle.dump(individual_ageGroups, open("g_third_lockdown/individual_ageGroups.p", "wb"))
+        pickle.dump(households, open("old_files/g_third_lockdown/households.p", "wb"))  # save it into a file named save.p
+        pickle.dump(individual_ageGroups, open("old_files/g_third_lockdown/individual_ageGroups.p", "wb"))
         households_indices = [household['indices'] for household in households]
 
         # -----------------------pandemic parameters ----------------------------
@@ -330,7 +330,7 @@ if __name__ == "__main__":
                     vaccinations_df=vaccination_data)  # vaccination_data
 
         curr_date = time.strftime("%Y_%m_%d")
-        dir_loc = f"g_third_lockdown/test_alpha/{id_run}"
+        dir_loc = f"old_files/g_third_lockdown/test_alpha/{id_run}"
         pathlib.Path(dir_loc).mkdir(parents=True, exist_ok=True)
         save_model(model, f"{dir_loc}/model_out")
         # save input params

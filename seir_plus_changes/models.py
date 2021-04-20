@@ -8,6 +8,7 @@ import scipy as scipy
 import scipy.integrate
 from seirsplus.networks import prune_graph_per_node_indexes, custom_exponential_graph
 
+
 ########################################################
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@#
 # @                                                    @#
@@ -154,7 +155,7 @@ class SEIRSModel():
                                                 self.theta_I, self.psi_E, self.psi_I, self.q
                                                 ),
             t_span=t_span, y0=init_cond, t_eval=t_eval
-            )
+        )
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         # Store the solution output as the model's time series and data series:
@@ -313,14 +314,14 @@ class SEIRSModel():
         if (dashed_reference_results):
             dashedReference_tseries = dashed_reference_results.tseries[::int(self.N / 100)]
             dashedReference_IDEstack = (
-                                                   dashed_reference_results.numI + dashed_reference_results.numQ_I + dashed_reference_results.numQ_E + dashed_reference_results.numE)[
+                                               dashed_reference_results.numI + dashed_reference_results.numQ_I + dashed_reference_results.numQ_E + dashed_reference_results.numE)[
                                        ::int(self.N / 100)] / (self.N if plot_percentages else 1)
             ax.plot(dashedReference_tseries, dashedReference_IDEstack, color='#E0E0E0', linestyle='--',
                     label='$I+D+E$ (' + dashed_reference_label + ')', zorder=0)
         if (shaded_reference_results):
             shadedReference_tseries = shaded_reference_results.tseries
             shadedReference_IDEstack = (
-                                                   shaded_reference_results.numI + shaded_reference_results.numQ_I + shaded_reference_results.numQ_E + shaded_reference_results.numE) / (
+                                               shaded_reference_results.numI + shaded_reference_results.numQ_I + shaded_reference_results.numQ_E + shaded_reference_results.numE) / (
                                            self.N if plot_percentages else 1)
             ax.fill_between(shaded_reference_results.tseries, shadedReference_IDEstack, 0, color='#EFEFEF',
                             label='$I+D+E$ (' + shaded_reference_label + ')', zorder=0)
@@ -820,7 +821,7 @@ class SEIRSNetworkModel():
         self.degree_Q = numpy.asarray(self.node_degrees(self.A_Q)).astype(float)
         # ----------------------------------------
         assert (
-                    self.numNodes == self.numNodes_Q), "The normal and quarantine adjacency graphs must be of the same size."
+                self.numNodes == self.numNodes_Q), "The normal and quarantine adjacency graphs must be of the same size."
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         # Model parameters:
@@ -841,16 +842,16 @@ class SEIRSNetworkModel():
             self.parameters['alpha'], (list, numpy.ndarray)) else numpy.full(fill_value=self.parameters['alpha'],
                                                                              shape=(self.numNodes, 1))
         self.xi = numpy.array(self.parameters['xi']).reshape((self.numNodes, 1)) if isinstance(self.parameters['xi'], (
-        list, numpy.ndarray)) else numpy.full(fill_value=self.parameters['xi'], shape=(self.numNodes, 1))
+            list, numpy.ndarray)) else numpy.full(fill_value=self.parameters['xi'], shape=(self.numNodes, 1))
         self.mu_0 = numpy.array(self.parameters['mu_0']).reshape((self.numNodes, 1)) if isinstance(
             self.parameters['mu_0'], (list, numpy.ndarray)) else numpy.full(fill_value=self.parameters['mu_0'],
                                                                             shape=(self.numNodes, 1))
         self.nu = numpy.array(self.parameters['nu']).reshape((self.numNodes, 1)) if isinstance(self.parameters['nu'], (
-        list, numpy.ndarray)) else numpy.full(fill_value=self.parameters['nu'], shape=(self.numNodes, 1))
+            list, numpy.ndarray)) else numpy.full(fill_value=self.parameters['nu'], shape=(self.numNodes, 1))
         self.f = numpy.array(self.parameters['f']).reshape((self.numNodes, 1)) if isinstance(self.parameters['f'], (
-        list, numpy.ndarray)) else numpy.full(fill_value=self.parameters['f'], shape=(self.numNodes, 1))
+            list, numpy.ndarray)) else numpy.full(fill_value=self.parameters['f'], shape=(self.numNodes, 1))
         self.p = numpy.array(self.parameters['p']).reshape((self.numNodes, 1)) if isinstance(self.parameters['p'], (
-        list, numpy.ndarray)) else numpy.full(fill_value=self.parameters['p'], shape=(self.numNodes, 1))
+            list, numpy.ndarray)) else numpy.full(fill_value=self.parameters['p'], shape=(self.numNodes, 1))
 
         self.rand_f = numpy.random.rand(self.f.shape[0], self.f.shape[1])
 
@@ -866,19 +867,19 @@ class SEIRSNetworkModel():
         self.sigma_Q = (numpy.array(self.parameters['sigma_Q']).reshape((self.numNodes, 1)) if isinstance(
             self.parameters['sigma_Q'], (list, numpy.ndarray)) else numpy.full(fill_value=self.parameters['sigma_Q'],
                                                                                shape=(self.numNodes, 1))) if \
-        self.parameters['sigma_Q'] is not None else self.sigma
+            self.parameters['sigma_Q'] is not None else self.sigma
         self.gamma_Q = (numpy.array(self.parameters['gamma_Q']).reshape((self.numNodes, 1)) if isinstance(
             self.parameters['gamma_Q'], (list, numpy.ndarray)) else numpy.full(fill_value=self.parameters['gamma_Q'],
                                                                                shape=(self.numNodes, 1))) if \
-        self.parameters['gamma_Q'] is not None else self.gamma
+            self.parameters['gamma_Q'] is not None else self.gamma
         self.mu_Q = (
             numpy.array(self.parameters['mu_Q']).reshape((self.numNodes, 1)) if isinstance(self.parameters['mu_Q'], (
-            list, numpy.ndarray)) else numpy.full(fill_value=self.parameters['mu_Q'], shape=(self.numNodes, 1))) if \
-        self.parameters['mu_Q'] is not None else self.mu_I
+                list, numpy.ndarray)) else numpy.full(fill_value=self.parameters['mu_Q'], shape=(self.numNodes, 1))) if \
+            self.parameters['mu_Q'] is not None else self.mu_I
         self.alpha_Q = (numpy.array(self.parameters['alpha_Q']).reshape((self.numNodes, 1)) if isinstance(
             self.parameters['alpha_Q'], (list, numpy.ndarray)) else numpy.full(fill_value=self.parameters['alpha_Q'],
                                                                                shape=(self.numNodes, 1))) if \
-        self.parameters['alpha_Q'] is not None else self.alpha
+            self.parameters['alpha_Q'] is not None else self.alpha
         self.theta_E = numpy.array(self.parameters['theta_E']).reshape((self.numNodes, 1)) if isinstance(
             self.parameters['theta_E'], (list, numpy.ndarray)) else numpy.full(fill_value=self.parameters['theta_E'],
                                                                                shape=(self.numNodes, 1))
@@ -898,7 +899,7 @@ class SEIRSNetworkModel():
             self.parameters['psi_I'], (list, numpy.ndarray)) else numpy.full(fill_value=self.parameters['psi_I'],
                                                                              shape=(self.numNodes, 1))
         self.q = numpy.array(self.parameters['q']).reshape((self.numNodes, 1)) if isinstance(self.parameters['q'], (
-        list, numpy.ndarray)) else numpy.full(fill_value=self.parameters['q'], shape=(self.numNodes, 1))
+            list, numpy.ndarray)) else numpy.full(fill_value=self.parameters['q'], shape=(self.numNodes, 1))
 
         # ----------------------------------------
 
@@ -1184,12 +1185,12 @@ class SEIRSNetworkModel():
             propensities_EtoI = 1e5 * ((self.X == self.E) & numpy.greater(self.timer_state, 1 / self.sigma))
 
             propensities_ItoR = 1e5 * (
-                        (self.X == self.I) & numpy.greater(self.timer_state, 1 / self.gamma) & numpy.greater_equal(
-                    self.rand_f, self.f))
+                    (self.X == self.I) & numpy.greater(self.timer_state, 1 / self.gamma) & numpy.greater_equal(
+                self.rand_f, self.f))
 
             propensities_ItoF = 1e5 * (
-                        (self.X == self.I) & numpy.greater(self.timer_state, 1 / self.mu_I) & numpy.less(self.rand_f,
-                                                                                                         self.f))
+                    (self.X == self.I) & numpy.greater(self.timer_state, 1 / self.mu_I) & numpy.less(self.rand_f,
+                                                                                                     self.f))
 
             propensities_EtoQE = numpy.zeros_like(propensities_StoE)
 
@@ -1198,12 +1199,12 @@ class SEIRSNetworkModel():
             propensities_QEtoQI = 1e5 * ((self.X == self.Q_E) & numpy.greater(self.timer_state, 1 / self.sigma_Q))
 
             propensities_QItoR = 1e5 * (
-                        (self.X == self.Q_I) & numpy.greater(self.timer_state, 1 / self.gamma_Q) & numpy.greater_equal(
-                    self.rand_f, self.f))
+                    (self.X == self.Q_I) & numpy.greater(self.timer_state, 1 / self.gamma_Q) & numpy.greater_equal(
+                self.rand_f, self.f))
 
             propensities_QItoF = 1e5 * (
-                        (self.X == self.Q_I) & numpy.greater(self.timer_state, 1 / self.mu_Q) & numpy.less(self.rand_f,
-                                                                                                           self.f))
+                    (self.X == self.Q_I) & numpy.greater(self.timer_state, 1 / self.mu_Q) & numpy.less(self.rand_f,
+                                                                                                       self.f))
 
             propensities_RtoS = 1e5 * ((self.X == self.R) & numpy.greater(self.timer_state, 1 / self.xi))
 
@@ -1651,14 +1652,14 @@ class SEIRSNetworkModel():
         if (dashed_reference_results):
             dashedReference_tseries = dashed_reference_results.tseries[::int(self.numNodes / 100)]
             dashedReference_IDEstack = (
-                                                   dashed_reference_results.numI + dashed_reference_results.numQ_I + dashed_reference_results.numQ_E + dashed_reference_results.numE)[
+                                               dashed_reference_results.numI + dashed_reference_results.numQ_I + dashed_reference_results.numQ_E + dashed_reference_results.numE)[
                                        ::int(self.numNodes / 100)] / (self.numNodes if plot_percentages else 1)
             ax.plot(dashedReference_tseries, dashedReference_IDEstack, color='#E0E0E0', linestyle='--',
                     label='$I+D+E$ (' + dashed_reference_label + ')', zorder=0)
         if (shaded_reference_results):
             shadedReference_tseries = shaded_reference_results.tseries
             shadedReference_IDEstack = (
-                                                   shaded_reference_results.numI + shaded_reference_results.numQ_I + shaded_reference_results.numQ_E + shaded_reference_results.numE) / (
+                                               shaded_reference_results.numI + shaded_reference_results.numQ_I + shaded_reference_results.numQ_E + shaded_reference_results.numE) / (
                                            self.numNodes if plot_percentages else 1)
             ax.fill_between(shaded_reference_results.tseries, shadedReference_IDEstack, 0, color='#EFEFEF',
                             label='$I+D+E$ (' + shaded_reference_label + ')', zorder=0)
@@ -2097,10 +2098,10 @@ class ExtSEIRSNetworkModel():
         self.numQ_asym[0] = int(initQ_asym)
         self.numQ_R[0] = int(initQ_R)
         self.numS[0] = (
-                    self.numNodes - self.numE[0] - self.numI_pre[0] - self.numI_sym[0] - self.numI_asym[0] - self.numH[
-                0] - self.numR[0]
-                    - self.numQ_S[0] - self.numQ_E[0] - self.numQ_pre[0] - self.numQ_sym[0] - self.numQ_asym[0] -
-                    self.numQ_R[0] - self.numF[0])
+                self.numNodes - self.numE[0] - self.numI_pre[0] - self.numI_sym[0] - self.numI_asym[0] - self.numH[
+            0] - self.numR[0]
+                - self.numQ_S[0] - self.numQ_E[0] - self.numQ_pre[0] - self.numQ_sym[0] - self.numQ_asym[0] -
+                self.numQ_R[0] - self.numF[0])
         self.N[0] = self.numNodes - self.numF[0]
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2269,7 +2270,7 @@ class ExtSEIRSNetworkModel():
         self.degree_Q = numpy.asarray(self.node_degrees(self.A_Q)).astype(float)
         # ----------------------------------------
         assert (
-                    self.numNodes == self.numNodes_Q), "The normal and quarantine adjacency graphs must be of the same size."
+                self.numNodes == self.numNodes_Q), "The normal and quarantine adjacency graphs must be of the same size."
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         # Model parameters:
@@ -2301,7 +2302,7 @@ class ExtSEIRSNetworkModel():
         self.gamma_H = (numpy.array(self.parameters['gamma_H']).reshape((self.numNodes, 1)) if isinstance(
             self.parameters['gamma_H'], (list, numpy.ndarray)) else numpy.full(fill_value=self.parameters['gamma_H'],
                                                                                shape=(self.numNodes, 1))) if \
-        self.parameters['gamma_H'] is not None else self.gamma
+            self.parameters['gamma_H'] is not None else self.gamma
         self.mu_H = numpy.array(self.parameters['mu_H']).reshape((self.numNodes, 1)) if isinstance(
             self.parameters['mu_H'], (list, numpy.ndarray)) else numpy.full(fill_value=self.parameters['mu_H'],
                                                                             shape=(self.numNodes, 1))
@@ -2309,22 +2310,22 @@ class ExtSEIRSNetworkModel():
             self.parameters['alpha'], (list, numpy.ndarray)) else numpy.full(fill_value=self.parameters['alpha'],
                                                                              shape=(self.numNodes, 1))
         self.xi = numpy.array(self.parameters['xi']).reshape((self.numNodes, 1)) if isinstance(self.parameters['xi'], (
-        list, numpy.ndarray)) else numpy.full(fill_value=self.parameters['xi'], shape=(self.numNodes, 1))
+            list, numpy.ndarray)) else numpy.full(fill_value=self.parameters['xi'], shape=(self.numNodes, 1))
         self.mu_0 = numpy.array(self.parameters['mu_0']).reshape((self.numNodes, 1)) if isinstance(
             self.parameters['mu_0'], (list, numpy.ndarray)) else numpy.full(fill_value=self.parameters['mu_0'],
                                                                             shape=(self.numNodes, 1))
         self.nu = numpy.array(self.parameters['nu']).reshape((self.numNodes, 1)) if isinstance(self.parameters['nu'], (
-        list, numpy.ndarray)) else numpy.full(fill_value=self.parameters['nu'], shape=(self.numNodes, 1))
+            list, numpy.ndarray)) else numpy.full(fill_value=self.parameters['nu'], shape=(self.numNodes, 1))
         self.a = numpy.array(self.parameters['a']).reshape((self.numNodes, 1)) if isinstance(self.parameters['a'], (
-        list, numpy.ndarray)) else numpy.full(fill_value=self.parameters['a'], shape=(self.numNodes, 1))
+            list, numpy.ndarray)) else numpy.full(fill_value=self.parameters['a'], shape=(self.numNodes, 1))
         self.h = numpy.array(self.parameters['h']).reshape((self.numNodes, 1)) if isinstance(self.parameters['h'], (
-        list, numpy.ndarray)) else numpy.full(fill_value=self.parameters['h'], shape=(self.numNodes, 1))
+            list, numpy.ndarray)) else numpy.full(fill_value=self.parameters['h'], shape=(self.numNodes, 1))
         self.f = numpy.array(self.parameters['f']).reshape((self.numNodes, 1)) if isinstance(self.parameters['f'], (
-        list, numpy.ndarray)) else numpy.full(fill_value=self.parameters['f'], shape=(self.numNodes, 1))
+            list, numpy.ndarray)) else numpy.full(fill_value=self.parameters['f'], shape=(self.numNodes, 1))
         self.p = numpy.array(self.parameters['p']).reshape((self.numNodes, 1)) if isinstance(self.parameters['p'], (
-        list, numpy.ndarray)) else numpy.full(fill_value=self.parameters['p'], shape=(self.numNodes, 1))
+            list, numpy.ndarray)) else numpy.full(fill_value=self.parameters['p'], shape=(self.numNodes, 1))
         self.o = numpy.array(self.parameters['o']).reshape((self.numNodes, 1)) if isinstance(self.parameters['o'], (
-        list, numpy.ndarray)) else numpy.full(fill_value=self.parameters['o'], shape=(self.numNodes, 1))
+            list, numpy.ndarray)) else numpy.full(fill_value=self.parameters['o'], shape=(self.numNodes, 1))
 
         self.rand_a = numpy.random.rand(self.a.shape[0], self.a.shape[1])
         self.rand_h = numpy.random.rand(self.h.shape[0], self.h.shape[1])
@@ -2349,11 +2350,11 @@ class ExtSEIRSNetworkModel():
         self.sigma_Q = (numpy.array(self.parameters['sigma_Q']).reshape((self.numNodes, 1)) if isinstance(
             self.parameters['sigma_Q'], (list, numpy.ndarray)) else numpy.full(fill_value=self.parameters['sigma_Q'],
                                                                                shape=(self.numNodes, 1))) if \
-        self.parameters['sigma_Q'] is not None else self.sigma
+            self.parameters['sigma_Q'] is not None else self.sigma
         self.lamda_Q = (numpy.array(self.parameters['lamda_Q']).reshape((self.numNodes, 1)) if isinstance(
             self.parameters['lamda_Q'], (list, numpy.ndarray)) else numpy.full(fill_value=self.parameters['lamda_Q'],
                                                                                shape=(self.numNodes, 1))) if \
-        self.parameters['lamda_Q'] is not None else self.lamda
+            self.parameters['lamda_Q'] is not None else self.lamda
         self.gamma_Q_sym = (numpy.array(self.parameters['gamma_Q_sym']).reshape((self.numNodes, 1)) if isinstance(
             self.parameters['gamma_Q_sym'], (list, numpy.ndarray)) else numpy.full(
             fill_value=self.parameters['gamma_Q_sym'], shape=(self.numNodes, 1))) if self.parameters[
@@ -2364,12 +2365,12 @@ class ExtSEIRSNetworkModel():
                                                                                           'gamma_Q_asym'] is not None else self.gamma
         self.eta_Q = (
             numpy.array(self.parameters['eta_Q']).reshape((self.numNodes, 1)) if isinstance(self.parameters['eta_Q'], (
-            list, numpy.ndarray)) else numpy.full(fill_value=self.parameters['eta_Q'], shape=(self.numNodes, 1))) if \
-        self.parameters['eta_Q'] is not None else self.eta
+                list, numpy.ndarray)) else numpy.full(fill_value=self.parameters['eta_Q'], shape=(self.numNodes, 1))) if \
+            self.parameters['eta_Q'] is not None else self.eta
         self.alpha_Q = (numpy.array(self.parameters['alpha_Q']).reshape((self.numNodes, 1)) if isinstance(
             self.parameters['alpha_Q'], (list, numpy.ndarray)) else numpy.full(fill_value=self.parameters['alpha_Q'],
                                                                                shape=(self.numNodes, 1))) if \
-        self.parameters['alpha_Q'] is not None else self.alpha
+            self.parameters['alpha_Q'] is not None else self.alpha
         self.theta_S = numpy.array(self.parameters['theta_S']).reshape((self.numNodes, 1)) if isinstance(
             self.parameters['theta_S'], (list, numpy.ndarray)) else numpy.full(fill_value=self.parameters['theta_S'],
                                                                                shape=(self.numNodes, 1))
@@ -2416,7 +2417,7 @@ class ExtSEIRSNetworkModel():
             self.parameters['psi_asym'], (list, numpy.ndarray)) else numpy.full(fill_value=self.parameters['psi_asym'],
                                                                                 shape=(self.numNodes, 1))
         self.q = numpy.array(self.parameters['q']).reshape((self.numNodes, 1)) if isinstance(self.parameters['q'], (
-        list, numpy.ndarray)) else numpy.full(fill_value=self.parameters['q'], shape=(self.numNodes, 1))
+            list, numpy.ndarray)) else numpy.full(fill_value=self.parameters['q'], shape=(self.numNodes, 1))
 
         # ----------------------------------------
 
@@ -2721,11 +2722,11 @@ class ExtSEIRSNetworkModel():
                 self.transmissionTerms_sym = numpy.asarray(
                     scipy.sparse.csr_matrix.dot(self.A_deltabeta, self.X == self.I_sym))
                 self.transmissionTerms_asym = numpy.asarray(scipy.sparse.csr_matrix.dot(self.A_deltabeta_asym, (
-                            (self.X == self.I_pre) | (self.X == self.I_asym))))
+                        (self.X == self.I_pre) | (self.X == self.I_asym))))
                 self.transmissionTerms_I = self.transmissionTerms_sym + self.transmissionTerms_asym
             else:
                 self.transmissionTerms_I = numpy.asarray(scipy.sparse.csr_matrix.dot(self.A_deltabeta, (
-                            (self.X == self.I_sym) | (self.X == self.I_pre) | (self.X == self.I_asym))))
+                        (self.X == self.I_sym) | (self.X == self.I_pre) | (self.X == self.I_asym))))
 
         # ------------------------------------
 
@@ -2733,25 +2734,25 @@ class ExtSEIRSNetworkModel():
         if (numpy.any(self.numQ_pre[self.tidx]) or numpy.any(self.numQ_sym[self.tidx]) or numpy.any(
                 self.numQ_asym[self.tidx])):
             self.transmissionTerms_Q = numpy.asarray(scipy.sparse.csr_matrix.dot(self.A_Q_deltabeta_Q, (
-                        (self.X == self.Q_pre) | (self.X == self.Q_sym) | (self.X == self.Q_asym))))
+                    (self.X == self.Q_pre) | (self.X == self.Q_sym) | (self.X == self.Q_asym))))
 
         # ------------------------------------
 
         self.transmissionTerms_IQ = numpy.zeros(shape=(self.numNodes, 1))
         if (numpy.any(self.numQ_S[self.tidx]) and (
                 numpy.any(self.numI_sym[self.tidx]) or numpy.any(self.numI_asym[self.tidx]) or numpy.any(
-                self.numI_pre[self.tidx]))):
+            self.numI_pre[self.tidx]))):
             self.transmissionTerms_IQ = numpy.asarray(scipy.sparse.csr_matrix.dot(self.A_Q_deltabeta_Q, (
-                        (self.X == self.I_sym) | (self.X == self.I_pre) | (self.X == self.I_asym))))
+                    (self.X == self.I_sym) | (self.X == self.I_pre) | (self.X == self.I_asym))))
 
         # ------------------------------------
 
         numContacts_Q = numpy.zeros(shape=(self.numNodes, 1))
         if (numpy.any(self.positive) and (
                 numpy.any(self.phi_S) or numpy.any(self.phi_E) or numpy.any(self.phi_pre) or numpy.any(
-                self.phi_sym) or numpy.any(self.phi_asym))):
+            self.phi_sym) or numpy.any(self.phi_asym))):
             numContacts_Q = numpy.asarray(scipy.sparse.csr_matrix.dot(self.A, (
-                        (self.positive) & (self.X != self.R) & (self.X != self.Q_R) & (self.X != self.F))))
+                    (self.positive) & (self.X != self.R) & (self.X != self.Q_R) & (self.X != self.F))))
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -2759,10 +2760,10 @@ class ExtSEIRSNetworkModel():
                              (self.o * (self.beta_global * self.prevalence_ext)
                               + (1 - self.o) * (
                                       self.p * ((self.beta_global * self.numI_sym[self.tidx] + self.beta_asym_global * (
-                                          self.numI_pre[self.tidx] + self.numI_asym[self.tidx])
+                                      self.numI_pre[self.tidx] + self.numI_asym[self.tidx])
                                                  + self.q * self.beta_Q_global * (
-                                                             self.numQ_pre[self.tidx] + self.numQ_sym[self.tidx] +
-                                                             self.numQ_asym[self.tidx])) / self.N[self.tidx])
+                                                         self.numQ_pre[self.tidx] + self.numQ_sym[self.tidx] +
+                                                         self.numQ_asym[self.tidx])) / self.N[self.tidx])
                                       + (1 - self.p) * (numpy.divide(self.transmissionTerms_I, self.degree,
                                                                      out=numpy.zeros_like(self.degree),
                                                                      where=self.degree != 0)
@@ -2777,11 +2778,11 @@ class ExtSEIRSNetworkModel():
                                    (self.o * (self.q * self.beta_global * self.prevalence_ext)
                                     + (1 - self.o) * (
                                             self.p * (self.q * (
-                                                self.beta_global * self.numI_sym[self.tidx] + self.beta_asym_global * (
-                                                    self.numI_pre[self.tidx] + self.numI_asym[self.tidx])
-                                                + self.beta_Q_global * (
-                                                            self.numQ_pre[self.tidx] + self.numQ_sym[self.tidx] +
-                                                            self.numQ_asym[self.tidx])) / self.N[self.tidx])
+                                            self.beta_global * self.numI_sym[self.tidx] + self.beta_asym_global * (
+                                            self.numI_pre[self.tidx] + self.numI_asym[self.tidx])
+                                            + self.beta_Q_global * (
+                                                    self.numQ_pre[self.tidx] + self.numQ_sym[self.tidx] +
+                                                    self.numQ_asym[self.tidx])) / self.N[self.tidx])
                                             + (1 - self.p) * (
                                                 numpy.divide(self.transmissionTerms_IQ + self.transmissionTerms_Q,
                                                              self.degree_Q, out=numpy.zeros_like(self.degree_Q),
@@ -2795,30 +2796,30 @@ class ExtSEIRSNetworkModel():
             propensities_EtoIPRE = 1e5 * ((self.X == self.E) & numpy.greater(self.timer_state, 1 / self.sigma))
 
             propensities_IPREtoISYM = 1e5 * (
-                        (self.X == self.I_pre) & numpy.greater(self.timer_state, 1 / self.lamda) & numpy.greater_equal(
-                    self.rand_a, self.a))
+                    (self.X == self.I_pre) & numpy.greater(self.timer_state, 1 / self.lamda) & numpy.greater_equal(
+                self.rand_a, self.a))
 
             propensities_IPREtoIASYM = 1e5 * (
-                        (self.X == self.I_pre) & numpy.greater(self.timer_state, 1 / self.lamda) & numpy.less(
-                    self.rand_a, self.a))
+                    (self.X == self.I_pre) & numpy.greater(self.timer_state, 1 / self.lamda) & numpy.less(
+                self.rand_a, self.a))
 
             propensities_ISYMtoR = 1e5 * (
-                        (self.X == self.I_sym) & numpy.greater(self.timer_state, 1 / self.gamma) & numpy.greater_equal(
-                    self.rand_h, self.h))
+                    (self.X == self.I_sym) & numpy.greater(self.timer_state, 1 / self.gamma) & numpy.greater_equal(
+                self.rand_h, self.h))
 
             propensities_ISYMtoH = 1e5 * (
-                        (self.X == self.I_sym) & numpy.greater(self.timer_state, 1 / self.eta) & numpy.less(self.rand_h,
-                                                                                                            self.h))
+                    (self.X == self.I_sym) & numpy.greater(self.timer_state, 1 / self.eta) & numpy.less(self.rand_h,
+                                                                                                        self.h))
 
             propensities_IASYMtoR = 1e5 * ((self.X == self.I_asym) & numpy.greater(self.timer_state, 1 / self.gamma))
 
             propensities_HtoR = 1e5 * (
-                        (self.X == self.H) & numpy.greater(self.timer_state, 1 / self.gamma_H) & numpy.greater_equal(
-                    self.rand_f, self.f))
+                    (self.X == self.H) & numpy.greater(self.timer_state, 1 / self.gamma_H) & numpy.greater_equal(
+                self.rand_f, self.f))
 
             propensities_HtoF = 1e5 * (
-                        (self.X == self.H) & numpy.greater(self.timer_state, 1 / self.mu_H) & numpy.less(self.rand_f,
-                                                                                                         self.f))
+                    (self.X == self.H) & numpy.greater(self.timer_state, 1 / self.mu_H) & numpy.less(self.rand_f,
+                                                                                                     self.f))
 
             propensities_StoQS = numpy.zeros_like(propensities_StoE)
 
@@ -2837,19 +2838,19 @@ class ExtSEIRSNetworkModel():
                 self.rand_a, self.a))
 
             propensities_QPREtoQASYM = 1e5 * (
-                        (self.X == self.Q_pre) & numpy.greater(self.timer_state, 1 / self.lamda_Q) & numpy.less(
-                    self.rand_a, self.a))
+                    (self.X == self.Q_pre) & numpy.greater(self.timer_state, 1 / self.lamda_Q) & numpy.less(
+                self.rand_a, self.a))
 
             propensities_QSYMtoQR = 1e5 * ((self.X == self.Q_sym) & numpy.greater(self.timer_state,
                                                                                   1 / self.gamma_Q_sym) & numpy.greater_equal(
                 self.rand_h, self.h))
 
             propensities_QSYMtoH = 1e5 * (
-                        (self.X == self.Q_sym) & numpy.greater(self.timer_state, 1 / self.eta_Q) & numpy.less(
-                    self.rand_h, self.h))
+                    (self.X == self.Q_sym) & numpy.greater(self.timer_state, 1 / self.eta_Q) & numpy.less(
+                self.rand_h, self.h))
 
             propensities_QASYMtoQR = 1e5 * (
-                        (self.X == self.Q_asym) & numpy.greater(self.timer_state, 1 / self.gamma_Q_asym))
+                    (self.X == self.Q_asym) & numpy.greater(self.timer_state, 1 / self.gamma_Q_asym))
 
             propensities_RtoS = 1e5 * ((self.X == self.R) & numpy.greater(self.timer_state, 1 / self.xi))
 
@@ -2880,23 +2881,23 @@ class ExtSEIRSNetworkModel():
             propensities_EtoQE = (self.theta_E + self.phi_E * numContacts_Q) * self.psi_E * (self.X == self.E)
 
             propensities_IPREtoQPRE = (self.theta_pre + self.phi_pre * numContacts_Q) * self.psi_pre * (
-                        self.X == self.I_pre)
+                    self.X == self.I_pre)
 
             propensities_ISYMtoQSYM = (self.theta_sym + self.phi_sym * numContacts_Q) * self.psi_sym * (
-                        self.X == self.I_sym)
+                    self.X == self.I_sym)
 
             propensities_IASYMtoQASYM = (self.theta_asym + self.phi_asym * numContacts_Q) * self.psi_asym * (
-                        self.X == self.I_asym)
+                    self.X == self.I_asym)
 
             propensities_QEtoQPRE = self.sigma_Q * (self.X == self.Q_E)
 
             propensities_QPREtoQSYM = self.lamda_Q * (
-                        (self.X == self.Q_pre) & (numpy.greater_equal(self.rand_a, self.a)))
+                    (self.X == self.Q_pre) & (numpy.greater_equal(self.rand_a, self.a)))
 
             propensities_QPREtoQASYM = self.lamda_Q * ((self.X == self.Q_pre) & (numpy.less(self.rand_a, self.a)))
 
             propensities_QSYMtoQR = self.gamma_Q_sym * (
-                        (self.X == self.Q_sym) & (numpy.greater_equal(self.rand_h, self.h)))
+                    (self.X == self.Q_sym) & (numpy.greater_equal(self.rand_h, self.h)))
 
             propensities_QSYMtoH = self.eta_Q * ((self.X == self.Q_sym) & (numpy.less(self.rand_h, self.h)))
 
@@ -3127,12 +3128,15 @@ class ExtSEIRSNetworkModel():
     # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     def get_optional_vaccination_indexes(self, optional_indexes):
-        current_state = self.X[optional_indexes]
-        curr_or1 = numpy.logical_or(current_state == self.S, current_state == self.E)
-        curr_or2 = numpy.logical_or(curr_or1, current_state == self.I_pre)
-        curr_or3 = numpy.logical_or(curr_or2, current_state == self.I_asym)
-        s_indexes = optional_indexes[numpy.where(curr_or3)[0]]
-        return set(s_indexes)
+        # current_state = self.X[optional_indexes]
+        is_node_positive = self.positive[optional_indexes]
+        # curr_or1 = numpy.logical_or(current_state == self.S, current_state == self.E)
+        # curr_or2 = numpy.logical_or(curr_or1, current_state == self.I_pre)
+        # curr_or3 = numpy.logical_or(curr_or2, current_state == self.I_asym)
+        # s_indexes = optional_indexes[numpy.where(curr_or3)[0]]
+        can_vaccinate = list(numpy.logical_not(is_node_positive).reshape(-1))
+        can_vaccinate_indexes = optional_indexes[numpy.where(can_vaccinate)[0]]
+        return set(can_vaccinate_indexes)
 
     def add_new_vaccinated_indexes(self, num_vaccinations_per_age):
         for group in self.nodeGroupData.keys():
@@ -3142,8 +3146,8 @@ class ExtSEIRSNetworkModel():
             indexes_not_vacc = set_optional_indexes.difference(already_vacc)
             # indexes_not_vacc = numpy.array([i for i in s_indexes if i not in already_vacc])
             n_vaccinate = numpy.min([len(indexes_not_vacc), num_vaccinations_per_age[group]])
-            # if n_vaccinate == 0:
-            #     print(f"t:{self.t}, can not find who to vaccinate for age group:{group}")
+            if n_vaccinate == 0:
+                print(f"t:{self.t}, can not find who to vaccinate for age group:{group}")
             indexes_to_vaccinate = numpy.random.choice(list(indexes_not_vacc), size=n_vaccinate)
             self.vacc_indexes.update(indexes_to_vaccinate)
             for i in indexes_to_vaccinate:
@@ -3302,7 +3306,7 @@ class ExtSEIRSNetworkModel():
 
         isolatedNodes = numpy.argwhere(
             (self.X == self.Q_S) | (self.X == self.Q_E) | (self.X == self.Q_pre) | (self.X == self.Q_sym) | (
-                        self.X == self.Q_asym) | (self.X == self.Q_R))[:, 0].flatten()
+                    self.X == self.Q_asym) | (self.X == self.Q_R))[:, 0].flatten()
         self.timer_isolation[isolatedNodes] = self.timer_isolation[isolatedNodes] + tau
 
         nodesExitingIsolation = numpy.argwhere(self.timer_isolation >= self.isolationTime)
@@ -3347,13 +3351,19 @@ class ExtSEIRSNetworkModel():
                     self.nodeGroupData[groupName]['mask'] * self.X == self.Q_R)
                 self.nodeGroupData[groupName]['N'][self.tidx] = numpy.clip((self.nodeGroupData[groupName]['numS'][0] +
                                                                             self.nodeGroupData[groupName]['numE'][0] +
-                                                                            self.nodeGroupData[groupName]['numI_pre'][0] +
-                                                                            self.nodeGroupData[groupName]['numI_sym'][0] +
-                                                                            self.nodeGroupData[groupName]['numI_asym'][0] +
+                                                                            self.nodeGroupData[groupName]['numI_pre'][
+                                                                                0] +
+                                                                            self.nodeGroupData[groupName]['numI_sym'][
+                                                                                0] +
+                                                                            self.nodeGroupData[groupName]['numI_asym'][
+                                                                                0] +
                                                                             self.nodeGroupData[groupName]['numQ_E'][0] +
-                                                                            self.nodeGroupData[groupName]['numQ_pre'][0] +
-                                                                            self.nodeGroupData[groupName]['numQ_sym'][0] +
-                                                                            self.nodeGroupData[groupName]['numQ_asym'][0] +
+                                                                            self.nodeGroupData[groupName]['numQ_pre'][
+                                                                                0] +
+                                                                            self.nodeGroupData[groupName]['numQ_sym'][
+                                                                                0] +
+                                                                            self.nodeGroupData[groupName]['numQ_asym'][
+                                                                                0] +
                                                                             self.nodeGroupData[groupName]['numR'][0]),
                                                                            a_min=0, a_max=self.numNodes)
                 self.nodeGroupData[groupName]['numTested'][self.tidx] = numpy.count_nonzero(

@@ -3,16 +3,16 @@ General_data:
   simulation_start_date : '2020-11-10'
   Load_graph :
     status: False
-    directory: "g_third_lockdown"
+    directory: "third_wave_simulation/opt_percentage_params"
   Save_graph :
     status: False
-    directory: "g_third_lockdown"
+    directory: "third_wave_simulation/opt_percentage_params"
   plot:
     status: False
   optimize:
     status: True
-    health_parameters : True
-    Number: 10
+    health_parameters : False
+    Number: 100
 model_param:
   General:
     INTERVENTION_START_PCT_INFECTED :  0.001

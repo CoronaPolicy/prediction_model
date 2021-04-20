@@ -5,7 +5,6 @@ import numpy
 import time
 
 
-
 def run_tti_sim(model, T, 
                 intervention_start_pct_infected=0, average_introductions_per_day=0,
                 testing_cadence='everyday', pct_tested_per_day=1.0, test_falseneg_rate='temporal', 
@@ -323,7 +322,7 @@ def run_tti_sim(model, T,
                             # +++++++++++++++++++++++++++++++++++++++++++++
                             numPositive += 1
                             if(i < len(symptomaticSelection)):
-                                numPositive_symptomatic  += 1
+                                numPositive_symptomatic += 1
                             elif(i < len(symptomaticSelection)+len(tracingSelection)):
                                 numPositive_tracing += 1
                             else:
@@ -363,7 +362,6 @@ def run_tti_sim(model, T,
                                         numContactsToTrace = num_contacts_to_trace
                                     newTracingPool.extend(testNodeContacts[0:numContactsToTrace])
 
-        
                 # Add the nodes to be isolated to the isolation queue:
                 isolationQueue_positive.append(newIsolationGroup_positive)
                 isolationQueue_symptomatic.append(newIsolationGroup_symptomatic)
@@ -371,6 +369,7 @@ def run_tti_sim(model, T,
 
                 # Add the nodes to be traced to the tracing queue:
                 tracingPoolQueue.append(newTracingPool)
+
 
 
                 print("\t"+str(numTested_symptomatic) +"\ttested due to symptoms  [+ "+str(numPositive_symptomatic)+" positive (%.2f %%) +]" % (numPositive_symptomatic/numTested_symptomatic*100 if numTested_symptomatic>0 else 0))

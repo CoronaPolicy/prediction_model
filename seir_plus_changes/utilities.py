@@ -3,6 +3,7 @@ import matplotlib.pyplot as pyplot
 import pickle
 from scipy.interpolate import interp1d
 
+
 def gamma_dist(mean, coeffvar, N):
     scale = mean * coeffvar ** 2
     shape = mean / scale

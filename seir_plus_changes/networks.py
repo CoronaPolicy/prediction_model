@@ -694,10 +694,10 @@ def generate_demographic_contact_network_costom_israel(N, demographic_data, laye
 
 def generate_demographic_contact_network(N, demographic_data, layer_generator='FARZ',
                                          layer_info=None, distancing_scales=[], isolation_groups=[], verbose=False,
-                                         households_data=None, number_of_people_each_household=None):
+                                         households_data=None, number_of_people_each_household=None, seed=1):
 
     graphs = {}
-
+    numpy.random.seed(seed)
     # Age pyramid of israel
     age_distn               = demographic_data['age_distn']
     # Age groups + num of expected people from each group
@@ -956,19 +956,21 @@ def generate_demographic_contact_network(N, demographic_data, layer_generator='F
                                             tol=1e-01, max_iters=200, seed=(None if graph_gen_attempts<10 else int(numpy.random.rand()*1000)))
 
                 elif(layer_generator == 'FARZ'):
-
+                    n_groups = int(layerInfo['numIndividuals']/30)
+                    if n_groups < 7:
+                        n_groups = 7
                     # https://github.com/rabbanyk/FARZ
                     layerInfo['graph'], layerInfo['communities'] = FARZ.generate(farz_params={ 
                                                                     'n': layerInfo['numIndividuals'], 
                                                                     'm': int(targetMeanDegree/2), # mean degree / 2
-                                                                    'k': int(layerInfo['numIndividuals']/30), # num communities wased 50 maybe change
+                                                                    'k': n_groups, # num communities wased 50 maybe change
                                                                     'alpha': 2.0,                 # clustering param
                                                                     'gamma': -0.6,                 # assortativity param
                                                                     'beta':  0.85,                 # prob within community edges was 0.6
                                                                     'r':     1,                  # max num communities node can be part of
                                                                     'q':     0.9,                 # probability of multi-community membership
                                                                     'phi': 10, 'b': 0.0, 'epsilon': 0.0000001,  # phi was 1
-                                                                    'directed': False, 'weighted': False})
+                                                                    'directed': False, 'weighted': False, 'seed':seed})
 
                 elif(layer_generator == 'BA'):
                     pass

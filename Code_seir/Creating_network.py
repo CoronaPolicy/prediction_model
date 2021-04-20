@@ -62,32 +62,32 @@ if __name__ == "__main__":
 
         G_quarantine = demographic_graphs['distancingScale0.5']
 
-        networkx.write_gpickle(G_baseline, "g_second_lockdown/G_baseline.gpickle")
-        networkx.write_gpickle(G_less_connections_1, "g_second_lockdown/G_less_connections_1.gpickle")
-        networkx.write_gpickle(G_less_connections_2, "g_second_lockdown/G_less_connections_2.gpickle")
-        networkx.write_gpickle(G_less_connections_3, "g_second_lockdown/G_less_connections_3.gpickle")
-        networkx.write_gpickle(G_less_connections_4, "g_second_lockdown/G_less_connections_4.gpickle")
-        networkx.write_gpickle(G_less_connections_5, "g_second_lockdown/G_less_connections_5.gpickle")
-        networkx.write_gpickle(G_less_connections_6, "g_second_lockdown/G_less_connections_6.gpickle")
-        networkx.write_gpickle(G_less_connections_7, "g_second_lockdown/G_less_connections_7.gpickle")
+        networkx.write_gpickle(G_baseline, "old_files/g_second_lockdown/G_baseline.gpickle")
+        networkx.write_gpickle(G_less_connections_1, "old_files/g_second_lockdown/G_less_connections_1.gpickle")
+        networkx.write_gpickle(G_less_connections_2, "old_files/g_second_lockdown/G_less_connections_2.gpickle")
+        networkx.write_gpickle(G_less_connections_3, "old_files/g_second_lockdown/G_less_connections_3.gpickle")
+        networkx.write_gpickle(G_less_connections_4, "old_files/g_second_lockdown/G_less_connections_4.gpickle")
+        networkx.write_gpickle(G_less_connections_5, "old_files/g_second_lockdown/G_less_connections_5.gpickle")
+        networkx.write_gpickle(G_less_connections_6, "old_files/g_second_lockdown/G_less_connections_6.gpickle")
+        networkx.write_gpickle(G_less_connections_7, "old_files/g_second_lockdown/G_less_connections_7.gpickle")
 
-        networkx.write_gpickle(G_quarantine, "g_second_lockdown/G_quarantine.gpickle")
+        networkx.write_gpickle(G_quarantine, "old_files/g_second_lockdown/G_quarantine.gpickle")
 
-        pickle.dump(households, open("g_second_lockdown/households.p", "wb"))  # save it into a file named save.p
-        pickle.dump(individual_ageGroups, open("g_second_lockdown/individual_ageGroups.p", "wb"))
+        pickle.dump(households, open("old_files/g_second_lockdown/households.p", "wb"))  # save it into a file named save.p
+        pickle.dump(individual_ageGroups, open("old_files/g_second_lockdown/individual_ageGroups.p", "wb"))
     else:
-        G_baseline = networkx.read_gpickle("g_second_lockdown/G_baseline.gpickle")
-        G_less_connections_1 = networkx.read_gpickle("g_second_lockdown/G_less_connections_1.gpickle")
-        G_less_connections_2 = networkx.read_gpickle("g_second_lockdown/G_less_connections_2.gpickle")
-        G_less_connections_3 = networkx.read_gpickle("g_second_lockdown/G_less_connections_3.gpickle")
-        G_less_connections_4 = networkx.read_gpickle("g_second_lockdown/G_less_connections_4.gpickle")
-        G_less_connections_5 = networkx.read_gpickle("g_second_lockdown/G_less_connections_5.gpickle")
-        G_less_connections_6 = networkx.read_gpickle("g_second_lockdown/G_less_connections_6.gpickle")
-        G_less_connections_7 = networkx.read_gpickle("g_second_lockdown/G_less_connections_7.gpickle")
+        G_baseline = networkx.read_gpickle("old_files/g_second_lockdown/G_baseline.gpickle")
+        G_less_connections_1 = networkx.read_gpickle("old_files/g_second_lockdown/G_less_connections_1.gpickle")
+        G_less_connections_2 = networkx.read_gpickle("old_files/g_second_lockdown/G_less_connections_2.gpickle")
+        G_less_connections_3 = networkx.read_gpickle("old_files/g_second_lockdown/G_less_connections_3.gpickle")
+        G_less_connections_4 = networkx.read_gpickle("old_files/g_second_lockdown/G_less_connections_4.gpickle")
+        G_less_connections_5 = networkx.read_gpickle("old_files/g_second_lockdown/G_less_connections_5.gpickle")
+        G_less_connections_6 = networkx.read_gpickle("old_files/g_second_lockdown/G_less_connections_6.gpickle")
+        G_less_connections_7 = networkx.read_gpickle("old_files/g_second_lockdown/G_less_connections_7.gpickle")
 
-        G_quarantine = networkx.read_gpickle("g_second_lockdown/G_quarantine.gpickle")
-        households = pickle.load(open("g_second_lockdown/households.p", "rb"))
-        individual_ageGroups = pickle.load(open("g_second_lockdown/individual_ageGroups.p", "rb"))
+        G_quarantine = networkx.read_gpickle("old_files/g_second_lockdown/G_quarantine.gpickle")
+        households = pickle.load(open("old_files/g_second_lockdown/households.p", "rb"))
+        individual_ageGroups = pickle.load(open("old_files/g_second_lockdown/individual_ageGroups.p", "rb"))
     households_indices = [household['indices'] for household in households]
     #plot_degree_distn(G_baseline, max_degree=100)
     #plot_degree_distn(G_quarantine, max_degree=100)
