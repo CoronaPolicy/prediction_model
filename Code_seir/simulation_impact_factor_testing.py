@@ -202,7 +202,7 @@ if __name__ == "__main__":
                 N=N, demographic_data=household_country_data('ISRAEL'),
                 distancing_scales=distancing_scales, isolation_groups=[], verbose=False,
                 layer_info=graph_info.layers_info, households_data=graph_info.housholds,
-                number_of_people_each_household=graph_info.numb_each_household, seed=seed)
+                number_of_people_each_household=graph_info.house_size, seed=seed)
 
             G_baseline = demographic_graphs['baseline']
 
@@ -289,25 +289,33 @@ if __name__ == "__main__":
             q_glob_adults = np.random.randint(1, 10) / 100
             percentage_edges_removed_vacc = np.random.randint(50, 100) / 100
         else:
-            # interactions being with incidental or casual contacts outside their set of close contacts
-            p_glob_kids = 0
-            p_glob_adults = 0
-            # interaction when a person is in quarantine
             q_glob_kids = [0, 0]
             q_glob_adults = 0
             percentage_edges_removed_vacc = 0.9
-        Q_GLOBALINTXN = []
-        for age in individual_ageGroups:
-            if age == '10-19':
-                Q_GLOBALINTXN.append(q_glob_kids[0])
-            elif age == '20-29':
-                Q_GLOBALINTXN.append(q_glob_kids[1])
-            else:
-                Q_GLOBALINTXN.append(q_glob_adults)
-        P_GLOBALINTXN = [p_glob_kids if age in ['0-9', '10-19'] else p_glob_adults for age in individual_ageGroups]
-        # Q_GLOBALINTXN = [q_glob_kids if age in ['10-19', '20-29'] else q_glob_adults for age in
-        #                  individual_ageGroups]
 
+        q_glob_per_age = {'0-9': 0,
+                          '10-19': 0.1,
+                          '20-29': 0.2,
+                          '30-39': 0.1,
+                          '40-49': 0.05,
+                          '50-59': 0.05,
+                          '60-69': 0.05,
+                          '70-79': 0,
+                          '80+': 0.}
+        p_glob_per_age = {'0-9': 0,
+                          '10-19': 0.3,
+                          '20-29': 0.3,
+                          '30-39': 0.3,
+                          '40-49': 0.2,
+                          '50-59': 0.2,
+                          '60-69': 0.1,
+                          '70-79': 0.1,
+                          '80+': 0.1}
+        print(f"Q_GLOBALINTXN is:{q_glob_per_age}")
+
+        Q_GLOBALINTXN = [q_glob_per_age[age] for age in individual_ageGroups]
+        # P_GLOBALINTXN = [p_glob_per_age[age] for age in individual_ageGroups]
+        P_GLOBALINTXN = 0.1
         PCT_ASYMPTOMATIC = 0  # percent of asymptomatic
 
         node_groups = {k: np.where(np.array(individual_ageGroups) == k)[0] for k in np.unique(individual_ageGroups)}
@@ -319,7 +327,7 @@ if __name__ == "__main__":
                                      a=PCT_ASYMPTOMATIC, h=health_info.PCT_HOSPITALIZED, f=health_info.PCT_FATALITY,
                                      alpha=health_info.ALPHA, beta_pairwise_mode=health_info.BETA_PAIRWISE_MODE,
                                      delta_pairwise_mode=health_info.DELTA_PAIRWISE_MODE,
-                                     G_Q=graphs_for_sim[-1], q=0, beta_Q=health_info.BETA_Q, isolation_time=10,
+                                     G_Q=graphs_for_sim[-1], q=Q_GLOBALINTXN, beta_Q=health_info.BETA_Q, isolation_time=10,
                                      initE=int(0.8 * INIT_EXP),
                                      initQ_E=INIT_EXP - int(0.8 * INIT_EXP), initI_sym=int(0.8 * 0),
                                      initI_asym=0,
@@ -354,8 +362,6 @@ if __name__ == "__main__":
 
         T = 200
         input_json = {'N': N,
-                      'p_global_kids': p_glob_kids,
-                      'p_global_adults': p_glob_adults,
                       'q_global_kids': q_glob_kids,
                       'q_global_adults': q_glob_adults,
                       'seed': seed,

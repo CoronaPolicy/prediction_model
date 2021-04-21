@@ -6,7 +6,7 @@ General_data:
   simulation_start_date : '2020-11-10'
   Load_graph :
     status: True
-    directory: "impact_factor/test_simulation/graphs/2021_04_21/0"
+    directory: "impact_factor/test_simulation/graphs/2021_04_21/11"
   Save_graph :
     status: False
     directory: "impact_factor/test_simulation/graphs"
@@ -44,7 +44,7 @@ model_param:
     ISOLATION_COMPLIANCE_RATE_POSITIVE_INDIVIDUAL : 1.0
     ISOLATION_COMPLIANCE_RATE_POSITIVE_GROUPMATE : 1.0
     ISOLATION_COMPLIANCE_RATE_POSITIVE_CONTACT : 1.0
-    ISOLATION_COMPLIANCE_RATE_POSITIVE_CONTACTGROUPMATE : 0.0
+    ISOLATION_COMPLIANCE_RATE_POSITIVE_CONTACTGROUPMATE : 1.0
     ISOLATION_LAG_SYMPTOMATIC: 0  # number of days between onset of symptoms and self-isolation of symptomatic
     ISOLATION_LAG_POSITIVE: 0   # test turn-around time (TAT): number of days between administration of test and isolation of positive cases
     ISOLATION_LAG_CONTACT: 0  # number of days between a contact being traced and that contact self-isolating
