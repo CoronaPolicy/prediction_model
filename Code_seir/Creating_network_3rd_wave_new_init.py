@@ -171,7 +171,8 @@ if __name__ == "__main__":
              'back:1-4,work', 'airports semi open', 'back:5-6,11-12',
              'purim', 'back:restaurants,7-10', 'airports fully opened', 'normal']
 
-    times_for_sim = np.array([160, 173, 178, 185, 203, 207, 218, 219, 235, 247, 254, 261, 265, 276, 285, 290]) - 160 + start_day
+    times_for_sim = np.array(
+        [160, 173, 178, 185, 203, 207, 218, 219, 235, 247, 254, 261, 265, 276, 285, 290]) - 160 + start_day
     optimize = General_information['optimize']['status']
     # decision = [General_information['optimize']['Number'] if optimize else 1]
     decision = General_information['optimize']['Number']
@@ -365,17 +366,17 @@ if __name__ == "__main__":
         TESTING_COMPLIANCE_SYMPTOMATIC = (numpy.random.rand(N) < testing['TESTING_COMPLIANCE_RATE_SYMPTOMATIC'])
         TRACING_COMPLIANCE = (numpy.random.rand(N) < general['TRACING_COMPLIANCE_RATE'])
         ISOLATION_COMPLIANCE_SYMPTOMATIC_INDIVIDUAL = (
-                    numpy.random.rand(N) < isolation['ISOLATION_COMPLIANCE_RATE_SYMPTOMATIC_INDIVIDUAL'])
+                numpy.random.rand(N) < isolation['ISOLATION_COMPLIANCE_RATE_SYMPTOMATIC_INDIVIDUAL'])
         ISOLATION_COMPLIANCE_SYMPTOMATIC_GROUPMATE = (
-                    numpy.random.rand(N) < isolation['ISOLATION_COMPLIANCE_RATE_SYMPTOMATIC_GROUPMATE'])
+                numpy.random.rand(N) < isolation['ISOLATION_COMPLIANCE_RATE_SYMPTOMATIC_GROUPMATE'])
         ISOLATION_COMPLIANCE_POSITIVE_INDIVIDUAL = (
-                    numpy.random.rand(N) < isolation['ISOLATION_COMPLIANCE_RATE_POSITIVE_INDIVIDUAL'])
+                numpy.random.rand(N) < isolation['ISOLATION_COMPLIANCE_RATE_POSITIVE_INDIVIDUAL'])
         ISOLATION_COMPLIANCE_POSITIVE_GROUPMATE = (
-                    numpy.random.rand(N) < isolation['ISOLATION_COMPLIANCE_RATE_POSITIVE_GROUPMATE'])
+                numpy.random.rand(N) < isolation['ISOLATION_COMPLIANCE_RATE_POSITIVE_GROUPMATE'])
         ISOLATION_COMPLIANCE_POSITIVE_CONTACT = (
-                    numpy.random.rand(N) < isolation['ISOLATION_COMPLIANCE_RATE_POSITIVE_CONTACT'])
+                numpy.random.rand(N) < isolation['ISOLATION_COMPLIANCE_RATE_POSITIVE_CONTACT'])
         ISOLATION_COMPLIANCE_POSITIVE_CONTACTGROUPMATE = (
-                    numpy.random.rand(N) < isolation['ISOLATION_COMPLIANCE_RATE_POSITIVE_CONTACTGROUPMATE'])
+                numpy.random.rand(N) < isolation['ISOLATION_COMPLIANCE_RATE_POSITIVE_CONTACTGROUPMATE'])
 
         T = 200
         input_json = {'N': N,
