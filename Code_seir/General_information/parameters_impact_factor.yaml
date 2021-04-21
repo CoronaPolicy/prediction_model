@@ -3,16 +3,16 @@ General_data:
     status: True
     Number: 1
   vaccination_data : "../israel_data/all_new_vaccination_data.csv"
-  simulation_start_date : '2020-11-10'
+  simulation_start_date : '2020-12-20'
   Load_graph :
     status: True
-    directory: "impact_factor/test_simulation/graphs/2021_04_21/11"
+    directory: "impact_factor/test_simulation/graphs/2021_04_21/28"
   Save_graph :
     status: False
-    directory: "impact_factor/test_simulation/graphs"
+    directory: "vaccinations/results/graphs"
   Save_model:
     status: True
-    directory: "impact_factor/test_simulation"
+    directory: "vaccinations/results_0p7"
   plot:
     status: True
   optimize:
@@ -20,7 +20,7 @@ General_data:
     save: True
     health_parameters : False
     Number: 1
-  vacc_policy: "no_policy"
+  vacc_policy: "triangle"
 model_param:
   General:
     INTERVENTION_START_PCT_INFECTED :  0.001
@@ -35,7 +35,7 @@ model_param:
     MAX_PCT_TESTS_FOR_SYMPTOMATICS : 1.0  # max percent of daily test allotment to use on self-reporting symptomatics
     MAX_PCT_TESTS_FOR_TRACES : 1.0  # max percent of daily test allotment to use on contact traces
     RANDOM_TESTING_DEGREE_BIAS : 0  # magnitude of degree bias in random selections for testing, none here
-    TESTING_COMPLIANCE_RATE_SYMPTOMATIC: 1.0
+    TESTING_COMPLIANCE_RATE_SYMPTOMATIC: 0.7
     TESTING_COMPLIANCE_RATE_TRACED: 1.0
     TESTING_COMPLIANCE_RATE_RANDOM: 0.0
   ISOLATION:

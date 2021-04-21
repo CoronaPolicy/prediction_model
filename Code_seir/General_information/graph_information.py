@@ -12,7 +12,7 @@ class graph_info(object):
                                        three_kids_old, one_kid_young_per, four_kids_young, four_kids_old)
 
         self.house_size = {'alone': 1,
-                           'students_app': 4,
+                           'students_app': 5,
                            'soldier': 4,
                            'couples_without_kids': 2,
                            'couples_kids_left_the_house': 2,
@@ -26,8 +26,8 @@ class graph_info(object):
         if dict_ages is None:
             dict_ages = {
                 '0-9': 1,
-                '10-19': 1,
-                '20-49': 1,
+                '10-19': 1.2,
+                '20-49': 1.2,
                 '50-69': 1,
                 '70+': 1,
             }

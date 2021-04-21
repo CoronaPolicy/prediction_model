@@ -137,7 +137,7 @@ if __name__ == "__main__":
 
     N = 10000
     start_day = 0
-    INIT_EXP = int(0.05 * N)
+    INIT_EXP = int(0.02 * N)
 
     General_information = running_info['General_data']
     vaccination_data = pd.read_csv(General_information['vaccination_data'])
@@ -239,15 +239,18 @@ if __name__ == "__main__":
         if General_information['vacc_policy'] == "regular":
             vaccination_data_out = vaccination_data.drop(columns=["num_tot"])
         elif General_information['vacc_policy'] == "no_policy":
-            # vaccination_data_out = None
-            vaccination_data.iloc[:, 2:-1] = 0 * vaccination_data.iloc[:, 2:-1]
-            vaccination_data_out = vaccination_data.drop(columns=["num_tot"])
-
+            vaccination_data_out = None
+            # vaccination_data.iloc[:, 2:-1] = 0 * vaccination_data.iloc[:, 2:-1]
+            # vaccination_data_out = vaccination_data.drop(columns=["num_tot"])
         else:
-            vaccination_data_out = health_info.create_vaccination_df(N, total_vacc_per_day_df=vaccination_data,
-                                                                     individual_ages_list=individual_ageGroups,
-                                                                     vacc_policy=General_information['vacc_policy'])
-            vaccination_data_out = vaccination_data_out.drop(columns=["num_tot"])
+            # vaccination_data_out = health_info.create_vaccination_df(N, total_vacc_per_day_df=vaccination_data,
+            #                                                          individual_ages_list=individual_ageGroups,
+            #                                                          vacc_policy=General_information['vacc_policy'])
+            # vaccination_data_out = vaccination_data_out.drop(columns=["num_tot"])
+            vaccination_data_out = health_info.create_vaccination_from_scartch(N, mean_vacc_per_day=80,
+                                                                               std_vacc_per_day=15,
+                                                                               individual_ages_list=individual_ageGroups,
+                                                                               vacc_policy=General_information['vacc_policy'])
 
         BETA_1p1 = [b * 1.1 for b in health_info.BETA]
         BETA_1p15 = [b * 1.15 for b in health_info.BETA]
@@ -319,7 +322,7 @@ if __name__ == "__main__":
         PCT_ASYMPTOMATIC = 0  # percent of asymptomatic
 
         node_groups = {k: np.where(np.array(individual_ageGroups) == k)[0] for k in np.unique(individual_ageGroups)}
-        model = ExtSEIRSNetworkModel(G=G_baseline, p=P_GLOBALINTXN,
+        model = ExtSEIRSNetworkModel(G=G_baseline, p=P_GLOBALINTXN, beta_local=health_info.BETA_LOCAL,
                                      beta=health_info.BETA, sigma=health_info.SIGMA, lamda=health_info.LAMDA,
                                      gamma=health_info.GAMMA,
                                      gamma_asym=health_info.GAMMA, eta=health_info.ETA, gamma_H=health_info.GAMMA_H,
@@ -360,7 +363,7 @@ if __name__ == "__main__":
         ISOLATION_COMPLIANCE_POSITIVE_CONTACTGROUPMATE = (
                 numpy.random.rand(N) < isolation['ISOLATION_COMPLIANCE_RATE_POSITIVE_CONTACTGROUPMATE'])
 
-        T = 200
+        T = 400
         input_json = {'N': N,
                       'q_global_kids': q_glob_kids,
                       'q_global_adults': q_glob_adults,

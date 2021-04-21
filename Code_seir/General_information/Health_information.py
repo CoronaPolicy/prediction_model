@@ -1,6 +1,6 @@
 from seirsplus.utilities import *
 import numpy as np
-
+import pandas as pd
 
 class health_information(object):
     """
@@ -23,21 +23,49 @@ class health_information(object):
                  onsetToHospitalizationPeriod_mean=11.0, onsetToHospitalizationPeriod_coeffvar=0.45,
                  hospitalizationToDischargePeriod_mean=11.0, hospitalizationToDischargePeriod_coeffvar=0.45,
                  hospitalizationToDeathPeriod_mean=7.0, hospitalizationToDeathPeriod_coeffvar=0.45,
-                 R0_mean=2.5, R0_coeffvar=0.2, alpha=None, optimze=False):
+                 R0_mean=2.5, R0_coeffvar=0.2, alpha=None, alpha_q=None, optimze=False):
 
         if alpha is None:
-            alpha = {'0-9': 0.5,
+            alpha = {'0-9': 0.3,
                      '10-19': 1.5,
-                     '20-29': 1.5,
-                     '30-39': 1.2,
+                     '20-29': 2.9,
+                     '30-39': 1.7,
                      '40-49': 1.0,
-                     '50-59': 1.0,
-                     '60-69': 0.8,
-                     '70-79': 0.8,
+                     '50-59': 1.4,
+                     '60-69': 0.6,
+                     '70-79': 0.6,
                      '80+': 0.8}
+            # alpha = {'0-9': 0.3,
+            #  '10-19': 1.5,
+            #  '20-29': 3.1,
+            #  '30-39': 1.7,
+            #  '40-49': 1.0,
+            #  '50-59': 1.4,
+            #  '60-69': 0.6,
+            #  '70-79': 0.6,
+            #  '80+': 0.8}
+            # alpha = {'0-9': 0.3,
+            #          '10-19': 1.5,
+            #          '20-29': 2.5,
+            #          '30-39': 1.2,
+            #          '40-49': 1.0,
+            #          '50-59': 1.0,
+            #          '60-69': 0.8,
+            #          '70-79': 0.8,
+            #          '80+': 0.8}
+            alpha_q = {'0-9': 0.3,
+                       '10-19': 1.5,
+                       '20-29': 2.9,
+                       '30-39': 1.7,
+                       '40-49': 1.0,
+                       '50-59': 1.4,
+                       '60-69': 0.6,
+                       '70-79': 0.6,
+                       '80+': 0.8}
         print(f"alpha is:{alpha}")
 
         self.ALPHA = [alpha[age] for age in individual_ageGroups]
+        self.ALPHA_Q = [alpha_q[age] for age in individual_ageGroups]
         self.SIGMA = 1 / gamma_dist(latentPeriod_mean, latentPeriod_coeffvar, N)
         self.LAMDA = 1 / gamma_dist(presymptomaticPeriod_mean, presymptomaticPeriod_coeffvar, N)
         self.GAMMA = 1 / gamma_dist(symptomaticPeriod_mean, symptomaticPeriod_coeffvar, N)
@@ -50,12 +78,23 @@ class health_information(object):
         self.factors = {}
         if optimze:
             self.factors['R0'] = numpy.random.random() + 1
-            self.BETA = [(1 / self.infectiousPeriod[i] * (self.factors['R0'] * self.R0[i])) if age in ['10-19', '20-29']
+            self.BETA = [(1 / self.infectiousPeriod[i] * (self.factors['R0'] * self.R0[i])) if age in ['20-29']
                          else (1 / self.infectiousPeriod[i] * self.R0[i]) for i, age in enumerate(individual_ageGroups)]
         else:
             self.factors['R0'] = 1.6
         self.BETA = [(1 / self.infectiousPeriod[i] * (self.factors['R0'] * self.R0[i])) if age in ['10-19', '20-29']
                      else (1 / self.infectiousPeriod[i] * self.R0[i]) for i, age in enumerate(individual_ageGroups)]
+        # beta_local_factor = {'0-9': 0.8,
+        #                      '10-19': 1,
+        #                      '20-29': 1.5,
+        #                      '30-39': 1.2,
+        #                      '40-49': 1,
+        #                      '50-59': 1,
+        #                      '60-69': 1,
+        #                      '70-79': 1,
+        #                      '80+': 1}
+        # self.BETA_LOCAL = [b * beta_local_factor[age] for (b, age) in zip(self.BETA, individual_ageGroups)]
+        self.BETA_LOCAL = self.BETA
         self.BETA_Q = [b * (0.3 / R0_mean) for b in self.BETA]
         self.ETA = 1 / gamma_dist(onsetToHospitalizationPeriod_mean, onsetToHospitalizationPeriod_coeffvar, N)
         self.GAMMA_H = 1 / gamma_dist(hospitalizationToDischargePeriod_mean, hospitalizationToDischargePeriod_coeffvar,
@@ -70,15 +109,15 @@ class health_information(object):
         self.PCT_FATALITY = [fatality[ageGroup] for ageGroup in individual_ageGroups]
 
     def infected_to_hospitalization(self):
-        H = {'0-9': 0.0000,  # We need to use the minister of health data
-             '10-19': 0.0004,
-             '20-29': 0.0104,
-             '30-39': 0.0343,
-             '40-49': 0.0425,
-             '50-59': 0.0816,
-             '60-69': 0.118,
-             '70-79': 0.166,
-             '80+': 0.184}
+        H = {'0-9': 0.023229,  # We need to use the minister of health data
+             '10-19': 0.016666,
+             '20-29': 0.051677,
+             '30-39': 0.065681,
+             '40-49': 0.092263,
+             '50-59': 0.121889,
+             '60-69': 0.209328,
+             '70-79': 0.350931,
+             '80+': 0.651545}
         return H
 
     def fatality(self):
@@ -121,5 +160,46 @@ class health_information(object):
                     if t > 0 and len(age_order) > 0:
                         print(f"finished age:{current_age}")
                         current_age = age_order.pop()
+        print(f"will not vaccinate ages:{age_order}")
         total_vacc_per_day_df.iloc()[:, 2:2 + 8] = num_vacc_per_day[:, :-1].astype(np.int64)
         return total_vacc_per_day_df
+
+    def create_vaccination_from_scartch(self, N, mean_vacc_per_day, std_vacc_per_day,
+                                        individual_ages_list, vacc_policy=None):
+        total_vacc_per_day = mean_vacc_per_day * N / (9 * 10 ** 6)
+        unique, counts = np.unique(individual_ages_list, return_counts=True)
+        num_per_age = dict(zip(unique, counts))
+        age_index = {k: i for i, k in enumerate(np.unique(individual_ages_list))}
+        age_order = []
+        if vacc_policy == "old_to_young":
+            # start with oldest people and go down
+            age_order = ['80+', '70-79', '60-69', '50-59', '40-49', '30-39', '20-29', '10-19'][::-1]
+        elif vacc_policy == "young_to_old":
+            # start with youngest people and go up
+            age_order = ['10-19', '20-29', '30-39', '40-49', '50-59', '60-69', '70-79', '80+'][::-1]
+        elif vacc_policy == "triangle":
+            age_order = ['80+', '70-79', '60-69', '10-19', '20-29', '30-39', '40-49'][::-1]
+        num_vacc_per_day = []
+        current_age = age_order.pop()
+        i_d = 1
+        while len(age_order) > 0:
+            num_vacc_today = np.zeros(shape=len(unique)+2)
+            num_vacc_today[-1] = i_d
+            i_d += 1
+            # generate random number of vaccinations for each day
+            t = int(np.random.normal(mean_vacc_per_day, std_vacc_per_day, 1))
+            while (t > 0) and len(age_order) > 0:
+                if num_per_age[current_age] > 0:
+                    num_vacc = np.min([t, num_per_age[current_age]])
+                    #                     print(f"t:{t}, num_vacc:{num_vacc}, len age order:{len(age_order)}")
+                    num_per_age[current_age] = num_per_age[current_age] - num_vacc
+                    num_vacc_today[age_index[current_age]+1] = int(num_vacc)
+                    t = t - num_vacc
+                    if t > 0 and len(age_order) > 0:
+                        print(f"finished age:{current_age}")
+                        current_age = age_order.pop()
+            num_vacc_per_day.append(num_vacc_today)
+        num_vacc_out = np.array(num_vacc_per_day).astype(int)
+        print(f"will not vaccinate ages:{age_order}")
+        vacc_df = pd.DataFrame(num_vacc_out, columns=['date'] + list(np.unique(individual_ages_list)) + ['num_day'])
+        return vacc_df
