@@ -26,8 +26,16 @@ class health_information(object):
                  R0_mean=2.5, R0_coeffvar=0.2, alpha=None, optimze=False):
 
         if alpha is None:
-            alpha = {'0-9': 1, '10-19': 1, '20-29': 1, '30-39': 1.0, '40-49': 1.0, '50-59': 1.0, '60-69': 1.0,
-                     '70-79': 1.0, '80+': 1.0}
+            alpha = {'0-9': 0.5,
+                     '10-19': 1.5,
+                     '20-29': 1.5,
+                     '30-39': 1.2,
+                     '40-49': 1.0,
+                     '50-59': 1.0,
+                     '60-69': 0.8,
+                     '70-79': 0.8,
+                     '80+': 0.8}
+        print(f"alpha is:{alpha}")
 
         self.ALPHA = [alpha[age] for age in individual_ageGroups]
         self.SIGMA = 1 / gamma_dist(latentPeriod_mean, latentPeriod_coeffvar, N)
