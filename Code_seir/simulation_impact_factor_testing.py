@@ -136,7 +136,7 @@ if __name__ == "__main__":
     running_info = yaml.load(running_info, Loader=yaml.FullLoader)
 
     N = 10000
-    start_day = 0
+    start_day = 30
     INIT_EXP = int(0.02 * N)
 
     General_information = running_info['General_data']
@@ -247,10 +247,11 @@ if __name__ == "__main__":
             #                                                          individual_ages_list=individual_ageGroups,
             #                                                          vacc_policy=General_information['vacc_policy'])
             # vaccination_data_out = vaccination_data_out.drop(columns=["num_tot"])
-            vaccination_data_out = health_info.create_vaccination_from_scartch(N, mean_vacc_per_day=80,
+            vaccination_data_out = health_info.create_vaccination_from_scartch(N, mean_vacc_per_day=120,
                                                                                std_vacc_per_day=15,
                                                                                individual_ages_list=individual_ageGroups,
-                                                                               vacc_policy=General_information['vacc_policy'])
+                                                                               vacc_policy=General_information['vacc_policy'],
+                                                                               start_day=start_day)
 
         BETA_1p1 = [b * 1.1 for b in health_info.BETA]
         BETA_1p15 = [b * 1.15 for b in health_info.BETA]
@@ -336,7 +337,7 @@ if __name__ == "__main__":
                                      initI_asym=0,
                                      initH=0 - int(0.8 * 0), seed=seed, node_groups=node_groups,
                                      per_remove_vacc_edges=percentage_edges_removed_vacc, initR=0,
-                                     store_Xseries=True)
+                                     store_Xseries=False)
 
         ###############################################################################
         ######################## defining the runing parameters #######################
@@ -399,18 +400,19 @@ if __name__ == "__main__":
         if General_information['Save_model']['status']:
             curr_date = time.strftime("%Y_%m_%d")
             directory = General_information['Save_model']["directory"] + ("/") + str(curr_date)
-            name = "model" + str(number_of_runs)
+            name = "model_" + General_information['vacc_policy']
             path_name = f"{directory}/{name}"
             with open(f"{path_name}.pickle", 'wb') as handle:
                 pickle.dump(model, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
-            name = "input_config" + str(number_of_runs)
-            path_name = f"{directory}/{name}"
-            with open(f"{path_name}.pickle", 'wb') as handle:
+            input_name = "input_config_" + General_information['vacc_policy']
+            params_name = "input_param_file_" + General_information['vacc_policy']
+            path_name = f"{directory}"
+            with open(f"{path_name}/{input_name}.pickle", 'wb') as handle:
                 pickle.dump(input_json, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
-            with open(f"{path_name}.pickle", 'wb') as handle:
-                pickle.dump(input_json, handle, protocol=pickle.HIGHEST_PROTOCOL)
+            with open(f"{path_name}/{params_name}.pickle", 'wb') as handle:
+                pickle.dump(General_information, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
         if General_information['plot']['status']:
             results_summary(model)
