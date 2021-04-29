@@ -550,17 +550,17 @@ if __name__ == "__main__":
     main(sys.argv[1:])
 
 # generate(farz_params={"n":25000,
-#                         "k":4, 
-#                         "m":5, 
+#                         "k":4,
+#                         "m":5,
 #                         "alpha":0.5,
-#                         "gamma":0.5, 
-#                         "beta":.8, 
-#                         "phi":1, 
-#                         "o":1, 
-#                         'q':0.5,  
-#                         "b":0.0, 
-#                         "epsilon":0.0000001, 
-#                         'directed':False, 
+#                         "gamma":0.5,
+#                         "beta":.8,
+#                         "phi":1,
+#                         "o":1,
+#                         'q':0.5,
+#                         "b":0.0,
+#                         "epsilon":0.0000001,
+#                         'directed':False,
 #                         'weighted':False})
 
 

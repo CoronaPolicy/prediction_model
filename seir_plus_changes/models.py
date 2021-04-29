@@ -3146,7 +3146,7 @@ class ExtSEIRSNetworkModel():
             indexes_not_vacc = set_optional_indexes.difference(already_vacc)
             # indexes_not_vacc = numpy.array([i for i in s_indexes if i not in already_vacc])
             n_vaccinate = numpy.min([len(indexes_not_vacc), num_vaccinations_per_age[group]])
-            if n_vaccinate == 0:
+            if n_vaccinate == 0 and num_vaccinations_per_age[group] > 0:
                 print(f"t:{self.t}, can not find who to vaccinate for age group:{group}")
             indexes_to_vaccinate = numpy.random.choice(list(indexes_not_vacc), size=n_vaccinate)
             self.vacc_indexes.update(indexes_to_vaccinate)
