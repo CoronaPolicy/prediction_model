@@ -291,19 +291,19 @@ if __name__ == "__main__":
 
         households_indices = [household['indices'] for household in households]
 
-        checkpoints = {'t': times_for_sim,
-                       'G': graphs_for_sim[:-1],
-                       'beta': [health_info.BETA, health_info.BETA, health_info.BETA,
-                                BETA_1p1, BETA_1p1, BETA_1p1,
-                                BETA_1p15, BETA_1p15, BETA_1p2,
-                                BETA_1p2, BETA_1p25, BETA_1p25,
-                                BETA_1p3, BETA_1p4, BETA_1p4, BETA_1p4],
-                       'beta_Q': [health_info.BETA_Q, health_info.BETA_Q, health_info.BETA_Q,
-                                  BETA_Q_1p1, BETA_Q_1p1, BETA_Q_1p1,
-                                  BETA_Q_1p15, BETA_Q_1p15, BETA_Q_1p2,
-                                  BETA_Q_1p2, BETA_Q_1p25, BETA_Q_1p25,
-                                  BETA_Q_1p3, BETA_Q_1p4, BETA_Q_1p4, BETA_Q_1p4]}
-
+        # checkpoints = {'t': times_for_sim,
+        #                'G': graphs_for_sim[:-1],
+        #                'beta': [health_info.BETA, health_info.BETA, health_info.BETA,
+        #                         BETA_1p1, BETA_1p1, BETA_1p1,
+        #                         BETA_1p15, BETA_1p15, BETA_1p2,
+        #                         BETA_1p2, BETA_1p25, BETA_1p25,
+        #                         BETA_1p3, BETA_1p4, BETA_1p4, BETA_1p4],
+        #                'beta_Q': [health_info.BETA_Q, health_info.BETA_Q, health_info.BETA_Q,
+        #                           BETA_Q_1p1, BETA_Q_1p1, BETA_Q_1p1,
+        #                           BETA_Q_1p15, BETA_Q_1p15, BETA_Q_1p2,
+        #                           BETA_Q_1p2, BETA_Q_1p25, BETA_Q_1p25,
+        #                           BETA_Q_1p3, BETA_Q_1p4, BETA_Q_1p4, BETA_Q_1p4]}
+        checkpoints = None
         # -------------------------model over time --------------------------------
         if General_information['optimize']['health_parameters']:
             # interactions being with incidental or casual contacts outside their set of close contacts
@@ -453,21 +453,21 @@ if __name__ == "__main__":
         if General_information['plot']['status']:
             results_summary(model)
 
-            plt.plot(model.tseries, ((model.numI_sym + model.numH) * 9e6) / N)
+            plt.plot(model.tseries, (model.numPositive * 9e6) / N)
             for t, event in zip(times_for_sim, event):
                 plt.axvline(int(t) + start_day, 0, 1, c='k')
                 plt.text(int(t) + 0.1 + start_day, 0, str(event), rotation=90)
-
+            accumulated_data = pd.read_csv("accumulated_data_for_sim.csv")
+            acc_time = accumulated_data.weeks_from.values * 7
+            accumulated = accumulated_data.accumulated_cases_country.values
             real_time = numpy.load('third_wave_simulation/time_3rd_wave.npy')
-            active_casese = numpy.load('third_wave_simulation/active_cases_3rd_wave.npy')
-            plt.plot(real_time + start_day, active_casese, '-r')
-
+            active_cases = numpy.load('third_wave_simulation/active_cases_3rd_wave.npy')
+            plt.plot(acc_time + start_day, accumulated, '-r')
             plt.show()
 
             age_dist = np.array([0.197, 0.164, 0.14, 0.13, 0.118, 0.091, 0.081, 0.049, 0.03])
             for num, key in enumerate(model.nodeGroupData.keys()):
                 mean_age = np.mean(model.nodeGroupData[key]['numPositive'] / (model.numPositive + 1e-5))
-
                 plt.bar(key, (mean_age / age_dist[num]).astype(float))
             plt.show()
             fig, ax = model.figure_infections(combine_Q_infected=False)

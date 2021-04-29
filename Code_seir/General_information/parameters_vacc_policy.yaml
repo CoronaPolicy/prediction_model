@@ -6,18 +6,18 @@ General_data:
   simulation_start_date : '2020-11-10'
   Load_graph :
     status: False
-    directory: "third_wave_simulation/test_simulation/graphs"
+    directory: "basic_simulation/test_params/graphs"
   Save_graph :
-    status: False
-    directory: "third_wave_simulation/test_simulation/graphs"
+    status: True
+    directory: "basic_simulation/test_params/graphs"
   Save_model:
     status: True
-    directory: "third_wave_simulation/test_simulation"
+    directory: "basic_simulation/test_params"
   plot:
-    status: False
+    status: True
   optimize:
     status: False
-    save: True
+    save: False
     health_parameters : False
     Number: 1
   vacc_policy: "regular"
