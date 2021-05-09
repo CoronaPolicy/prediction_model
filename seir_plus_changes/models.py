@@ -2197,6 +2197,7 @@ class ExtSEIRSNetworkModel():
                 self.nodeGroupData[groupName]['numI_sym'] = numpy.zeros(6 * self.numNodes)
                 self.nodeGroupData[groupName]['numI_asym'] = numpy.zeros(6 * self.numNodes)
                 self.nodeGroupData[groupName]['numH'] = numpy.zeros(6 * self.numNodes)
+                self.nodeGroupData[groupName]['numH_total'] = numpy.zeros(6 * self.numNodes)
                 self.nodeGroupData[groupName]['numR'] = numpy.zeros(6 * self.numNodes)
                 self.nodeGroupData[groupName]['numF'] = numpy.zeros(6 * self.numNodes)
                 self.nodeGroupData[groupName]['numQ_S'] = numpy.zeros(6 * self.numNodes)
@@ -2219,6 +2220,8 @@ class ExtSEIRSNetworkModel():
                 self.nodeGroupData[groupName]['numI_asym'][0] = numpy.count_nonzero(
                     self.nodeGroupData[groupName]['mask'] * self.X == self.I_asym)
                 self.nodeGroupData[groupName]['numH'][0] = numpy.count_nonzero(
+                    self.nodeGroupData[groupName]['mask'] * self.X == self.H)
+                self.nodeGroupData[groupName]['numH_total'][0] = numpy.count_nonzero(
                     self.nodeGroupData[groupName]['mask'] * self.X == self.H)
                 self.nodeGroupData[groupName]['numR'][0] = numpy.count_nonzero(
                     self.nodeGroupData[groupName]['mask'] * self.X == self.R)
@@ -3029,6 +3032,9 @@ class ExtSEIRSNetworkModel():
                 self.nodeGroupData[groupName]['numH'] = numpy.pad(self.nodeGroupData[groupName]['numH'],
                                                                   [(0, 6 * self.numNodes)], mode='constant',
                                                                   constant_values=0)
+                self.nodeGroupData[groupName]['numH_total'] = numpy.pad(self.nodeGroupData[groupName]['numH_total'],
+                                                                  [(0, 6 * self.numNodes)], mode='constant',
+                                                                  constant_values=0)
                 self.nodeGroupData[groupName]['numR'] = numpy.pad(self.nodeGroupData[groupName]['numR'],
                                                                   [(0, 6 * self.numNodes)], mode='constant',
                                                                   constant_values=0)
@@ -3095,6 +3101,10 @@ class ExtSEIRSNetworkModel():
             for groupName in self.nodeGroupData:
                 self.nodeGroupData[groupName]['numS'] = numpy.array(self.nodeGroupData[groupName]['numS'], dtype=float)[
                                                         :self.tidx + 1]
+                self.nodeGroupData[groupName]['numH'] = numpy.array(self.nodeGroupData[groupName]['numH'], dtype=float)[
+                                                        :self.tidx + 1]
+                self.nodeGroupData[groupName]['numH_total'] = numpy.array(self.nodeGroupData[groupName]['numH_total'],
+                                                                          dtype=float)[:self.tidx + 1]
                 self.nodeGroupData[groupName]['numE'] = numpy.array(self.nodeGroupData[groupName]['numE'], dtype=float)[
                                                         :self.tidx + 1]
                 self.nodeGroupData[groupName]['numI_pre'] = numpy.array(self.nodeGroupData[groupName]['numI_pre'],
@@ -3338,6 +3348,8 @@ class ExtSEIRSNetworkModel():
                     self.nodeGroupData[groupName]['mask'] * self.X == self.I_asym)
                 self.nodeGroupData[groupName]['numH'][self.tidx] = numpy.count_nonzero(
                     self.nodeGroupData[groupName]['mask'] * self.X == self.H)
+                self.nodeGroupData[groupName]['numH_total'][self.tidx] = \
+                    len(set(numpy.where(self.nodeGroupData[groupName]['mask'])[0]).intersection(self.hosp_indexes))
                 self.nodeGroupData[groupName]['numR'][self.tidx] = numpy.count_nonzero(
                     self.nodeGroupData[groupName]['mask'] * self.X == self.R)
                 self.nodeGroupData[groupName]['numF'][self.tidx] = numpy.count_nonzero(
