@@ -6,21 +6,21 @@ General_data:
   simulation_start_date : '2020-12-20'
   Load_graph :
     status: True
-    directory: "impact_factor/test_simulation/graphs/2021_04_21/28"
+    directory: "vaccinations/results/graphs/2021_05_04/0"
   Save_graph :
     status: False
     directory: "vaccinations/results/graphs"
   Save_model:
     status: True
-    directory: "vaccinations/results_0p7_iso_sym_delayed_30"
+    directory: "vaccinations/results_0p7_iso_sym_delayed_10_perday_20"
   plot:
-    status: True
+    status: False
   optimize:
     status: False
     save: True
     health_parameters : False
     Number: 1
-  vacc_policy: "young_population"
+  vacc_policy: "all_ages"
 model_param:
   General:
     INTERVENTION_START_PCT_INFECTED :  0.001
@@ -41,7 +41,7 @@ model_param:
   ISOLATION:
     ISOLATION_COMPLIANCE_RATE_SYMPTOMATIC_INDIVIDUAL     : 0.3
     ISOLATION_COMPLIANCE_RATE_SYMPTOMATIC_GROUPMATE      : 0.0
-    ISOLATION_COMPLIANCE_RATE_POSITIVE_INDIVIDUAL        : 0.0
+    ISOLATION_COMPLIANCE_RATE_POSITIVE_INDIVIDUAL        : 0.8
     ISOLATION_COMPLIANCE_RATE_POSITIVE_GROUPMATE         : 0.8  # Isolate teams with a positive member, but suppose 20% of employees are essential workforce
     ISOLATION_COMPLIANCE_RATE_POSITIVE_CONTACT           : 0.0
     ISOLATION_COMPLIANCE_RATE_POSITIVE_CONTACTGROUPMATE  : 0.0
