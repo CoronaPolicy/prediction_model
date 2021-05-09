@@ -2042,6 +2042,7 @@ class ExtSEIRSNetworkModel():
         self.update_parameters()
         self.checkpoint_index = 0
         self.vacc_indexes = set()
+        self.hosp_indexes = set()
         self.vacc_remove_edges = {}
         self.per_remove_vacc_edges = per_remove_vacc_edges
 
@@ -2058,6 +2059,7 @@ class ExtSEIRSNetworkModel():
         self.numI_sym = numpy.zeros(6 * self.numNodes)
         self.numI_asym = numpy.zeros(6 * self.numNodes)
         self.numH = numpy.zeros(6 * self.numNodes)
+        self.numH_total = numpy.zeros(6 * self.numNodes)
         self.numR = numpy.zeros(6 * self.numNodes)
         self.numF = numpy.zeros(6 * self.numNodes)
         self.numQ_S = numpy.zeros(6 * self.numNodes)
@@ -2991,6 +2993,7 @@ class ExtSEIRSNetworkModel():
         self.numI_sym = numpy.pad(self.numI_sym, [(0, 6 * self.numNodes)], mode='constant', constant_values=0)
         self.numI_asym = numpy.pad(self.numI_asym, [(0, 6 * self.numNodes)], mode='constant', constant_values=0)
         self.numH = numpy.pad(self.numH, [(0, 6 * self.numNodes)], mode='constant', constant_values=0)
+        self.numH_total = numpy.pad(self.numH_total, [(0, 6 * self.numNodes)], mode='constant', constant_values=0)
         self.numR = numpy.pad(self.numR, [(0, 6 * self.numNodes)], mode='constant', constant_values=0)
         self.numF = numpy.pad(self.numF, [(0, 6 * self.numNodes)], mode='constant', constant_values=0)
         self.numQ_S = numpy.pad(self.numQ_S, [(0, 6 * self.numNodes)], mode='constant', constant_values=0)
@@ -3072,6 +3075,7 @@ class ExtSEIRSNetworkModel():
         self.numI_sym = numpy.array(self.numI_sym, dtype=float)[:self.tidx + 1]
         self.numI_asym = numpy.array(self.numI_asym, dtype=float)[:self.tidx + 1]
         self.numH = numpy.array(self.numH, dtype=float)[:self.tidx + 1]
+        self.numH_total = numpy.array(self.numH_total, dtype=float)[:self.tidx + 1]
         self.numR = numpy.array(self.numR, dtype=float)[:self.tidx + 1]
         self.numF = numpy.array(self.numF, dtype=float)[:self.tidx + 1]
         self.numQ_S = numpy.array(self.numQ_S, dtype=float)[:self.tidx + 1]
@@ -3279,7 +3283,8 @@ class ExtSEIRSNetworkModel():
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         self.tidx += 1
-
+        self.hosp_indexes = self.hosp_indexes.union(set(numpy.where(self.X == self.H)[0]))
+        self.numH_total[self.tidx] = len(self.hosp_indexes)
         self.tseries[self.tidx] = self.t
         self.numS[self.tidx] = numpy.clip(numpy.count_nonzero(self.X == self.S), a_min=0, a_max=self.numNodes)
         self.numE[self.tidx] = numpy.clip(numpy.count_nonzero(self.X == self.E), a_min=0, a_max=self.numNodes)

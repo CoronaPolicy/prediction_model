@@ -1,10 +1,7 @@
 from __future__ import division
-import numpy
-import scipy
-import networkx
 from . import FARZ
 from .models import *
-from typing import List, Dict
+from typing import Dict
 
 import matplotlib.pyplot as pyplot
 
