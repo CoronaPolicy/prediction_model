@@ -1,6 +1,8 @@
 # BNT162b2 mRNA vaccinations in Israel: understanding the impact and improving the vaccination policies by redefining the immunized population
 
 
+Chana Ross, Oren Spector
+
 1. covid-19 data + cbs data on Israel can be found in:
   - israel_data/*.csv
   
