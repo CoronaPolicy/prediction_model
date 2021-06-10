@@ -14,6 +14,7 @@ from General_information.Health_information import health_information
 import yaml
 import os
 import random
+import csv
 
 
 def add_message(message):
@@ -24,6 +25,18 @@ def add_message(message):
         str_message += str('#')
 
     print(str_message[:])
+
+
+def moving_average(x, w):
+    return np.convolve(x, np.ones(w), 'valid') / w
+
+
+def get_data_per_day(data, time):
+    unique_days, count = np.unique(np.round(time, 0), return_counts=True)
+    days_out = np.arange(moving_average(time, 10).min(), moving_average(time, 10).max(), 1)
+    f_data = interp1d(moving_average(time, 10), moving_average(data, 10))
+    data_per_day = f_data(days_out)
+    return data_per_day, days_out
 
 
 def evenets_param(random=False):
@@ -131,7 +144,6 @@ if __name__ == "__main__":
                       85, 80, 70,
                       50, 30, 20, 5]
     """
-
     running_info = open("General_information/parameters_impact_factor.yaml")
     running_info = yaml.load(running_info, Loader=yaml.FullLoader)
 
@@ -180,6 +192,11 @@ if __name__ == "__main__":
     num_seeds = General_information['seed']['num_seeds']
     vaccination_policies = ["no_policy", "old_to_young", "young_to_old", "triangle", "all_ages"]
     num_per_day = np.arange(50, 400, 75)
+    csvData = [['seed', 'policy', 'per_day', 'max_pos', 'max_hosp']]
+    results_file = f"{directory}/combined_results.csv"
+    with open(results_file, 'w') as csvFile:
+        writer = csv.writer(csvFile)
+        writer.writerows(csvData)
     for number_of_runs in range(intial, intial + num_seeds):
         for v_type in vaccination_policies:
             for n_day in num_per_day:
@@ -193,6 +210,7 @@ if __name__ == "__main__":
                     random.seed(seed)
                 add_message(f'seed:{seed + number_of_runs}')
                 add_message(str(number_of_runs))
+                add_message(f"number of vaccinations per day:{n_day}")
                 distancing_scales = [0.7]
                 ###############################################################################
                 ######################## Load or save graph  ##################################
@@ -418,6 +436,17 @@ if __name__ == "__main__":
 
                     with open(f"{path_name}/{params_name}.pickle", 'wb') as handle:
                         pickle.dump(General_information, handle, protocol=pickle.HIGHEST_PROTOCOL)
+                    accum_pos_per_day, days = get_data_per_day(model.numPositive, model.tseries)
+                    accum_hosp_per_day, _ = get_data_per_day(model.numH, model.tseries)
+                    max_hosp = np.max(accum_hosp_per_day)
+                    max_pos = np.max(accum_pos_per_day)
+                    seed_out = seed + number_of_runs
+                    policy_out = v_type
+                    per_day_out = n_day
+                    row = [[str(seed_out), str(policy_out), str(per_day_out), str(max_pos), str(max_hosp)]]
+                    with open(results_file, 'a') as csvFile:
+                        writer = csv.writer(csvFile)
+                        writer.writerows(row)
 
                 if General_information['plot']['status']:
                     results_summary(model)

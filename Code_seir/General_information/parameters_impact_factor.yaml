@@ -7,7 +7,7 @@ General_data:
   simulation_start_date : '2020-12-20'
   Load_graph :
     status: True
-    directory: "vaccinations/results/graphs/2021_05_04/0"
+    directory: "vaccinations/results/graphs/2021_05_12/0"
   Save_graph :
     status: False
     directory: "vaccinations/results/graphs"

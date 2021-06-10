@@ -135,7 +135,7 @@ if __name__ == "__main__":
     running_info = open("General_information/parameters_impact_factor.yaml")
     running_info = yaml.load(running_info, Loader=yaml.FullLoader)
 
-    N = 10000
+    N = 15000
     start_day = 10
     INIT_EXP = int(0.02 * N)
 
