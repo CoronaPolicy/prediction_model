@@ -5,9 +5,9 @@
   - israel_data
 
 2. seirsplus simulation files can be found in:
+<img src="https://github.com/ryansmcgee/seirsplus/blob/master/images/ExtSEIRS_compartments.png" width="400">
   - seir_plus_changes 
-
-these files can be used for running the simulation in : https://github.com/ryansmcgee/seirsplus with our corrections for Israel and for vaccination policies
+  - these files can be used for running the simulation in : https://github.com/ryansmcgee/seirsplus with our corrections for Israel and for vaccination policies
 
 3. simulation analysis + code to run different vaccination seeds + policies can be found in:
   - Code_seir
