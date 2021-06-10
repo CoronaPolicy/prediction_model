@@ -5,7 +5,7 @@
   - israel_data
 
 2. seirsplus simulation files can be found in:
-<img src="https://github.com/CoronaPolicy/prediction_model/edit/main/seirsplus_quarentine.png" width="400">
+<img src="https://github.com/CoronaPolicy/prediction_model/blob/main/seirsplus_quarentine.png" width="400">
 <img align="right" src="https://github.com/ryansmcgee/seirsplus/blob/master/images/network_p.png" height="220">
 
   - seir_plus_changes 
