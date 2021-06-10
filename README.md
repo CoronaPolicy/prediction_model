@@ -1,8 +1,21 @@
 # prediction_model
 this repo will have the datasets and training of the prediciton model
 
-# data for united states :
-https://www.ers.usda.gov/data-products/county-level-data-sets/download-data/
+# covid-19 data + cbs data on Israel can be found in:
+israel_data
 
-# data for united states population : 
-https://www.census.gov/data/datasets/time-series/demo/popest/2010s-state-total.html#par_textimage_500989927
+# seirsplus simulation files can be found in:
+seir_plus_changes 
+these files can be used for running the simulation in : https://github.com/ryansmcgee/seirsplus with our corrections for Israel and for vaccination policies
+
+# simulation analysis + code to run different vaccination seeds + policies can be found in:
+Code_seir
+
+# Python Requirments:
+-python >= 3.7
+-matplotlib
+-scipy
+-numpy
+-pandas
+-networkx
+-farz
