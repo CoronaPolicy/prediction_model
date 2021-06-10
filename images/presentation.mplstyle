@@ -7,4 +7,4 @@ xtick.labelsize : 16
 ytick.labelsize : 16
 grid.alpha : 0.5
 figure.autolayout : True 
-figure.figsize : 15,12
+figure.figsize : 15,10

@@ -127,3 +127,10 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# my old files
+israel_data/old_files
+/Code_seir/old_files/
+/Code_seir/third_wave_simulation/
+/Code_seir/test_random_graphs/
+

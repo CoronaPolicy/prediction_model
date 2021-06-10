@@ -1,0 +1,53 @@
+General_data:
+  seed:
+    status: True
+    Number: 1
+    num_seeds: 10
+  vaccination_data : "../israel_data/all_new_vaccination_data.csv"
+  simulation_start_date : '2020-12-20'
+  Load_graph :
+    status: True
+    directory: "vaccinations/results/graphs/2021_05_12/0"
+  Save_graph :
+    status: False
+    directory: "vaccinations/results/graphs"
+  Save_model:
+    status: True
+    directory: "vaccinations/results_0p7_iso_sym_delayed_10"
+  plot:
+    status: False
+  optimize:
+    status: False
+    save: True
+    health_parameters : False
+    Number: 1
+  vacc_policy: "no_policy"
+model_param:
+  General:
+    INTERVENTION_START_PCT_INFECTED :  0.001
+    TRACING_COMPLIANCE_RATE : 0.7
+    AVERAGE_INTRODUCTIONS_PER_DAY : 0
+    PCT_CONTACTS_TO_TRACE : 0.5  # percentage of primary cases' contacts that are traced
+    TRACING_LAG : 2  # number of cadence testing days between primary tests and tracing tests
+  Testing:
+    TESTING_CADENCE : 'everyday'  # how often to do tracing testing and random testing
+    PCT_TESTED_PER_DAY : 0.1  # max daily test allotment defined as a percent of population size
+    TEST_FALSENEG_RATE : 0.0 # test false negative rate, will use FN rate that varies with disease time
+    MAX_PCT_TESTS_FOR_SYMPTOMATICS : 1.0  # max percent of daily test allotment to use on self-reporting symptomatics
+    MAX_PCT_TESTS_FOR_TRACES : 1.0  # max percent of daily test allotment to use on contact traces
+    RANDOM_TESTING_DEGREE_BIAS : 0  # magnitude of degree bias in random selections for testing, none here
+    TESTING_COMPLIANCE_RATE_SYMPTOMATIC: 0.7
+    TESTING_COMPLIANCE_RATE_TRACED: 1.0
+    TESTING_COMPLIANCE_RATE_RANDOM: 0.0
+  ISOLATION:
+    ISOLATION_COMPLIANCE_RATE_SYMPTOMATIC_INDIVIDUAL     : 0.3
+    ISOLATION_COMPLIANCE_RATE_SYMPTOMATIC_GROUPMATE      : 0.0
+    ISOLATION_COMPLIANCE_RATE_POSITIVE_INDIVIDUAL        : 0.8
+    ISOLATION_COMPLIANCE_RATE_POSITIVE_GROUPMATE         : 0.8  # Isolate teams with a positive member, but suppose 20% of employees are essential workforce
+    ISOLATION_COMPLIANCE_RATE_POSITIVE_CONTACT           : 0.0
+    ISOLATION_COMPLIANCE_RATE_POSITIVE_CONTACTGROUPMATE  : 0.0
+    ISOLATION_LAG_SYMPTOMATIC: 1  # number of days between onset of symptoms and self-isolation of symptomatic
+    ISOLATION_LAG_POSITIVE: 2   # test turn-around time (TAT): number of days between administration of test and isolation of positive cases
+    ISOLATION_LAG_CONTACT: 0  # number of days between a contact being traced and that contact self-isolating
+
+
